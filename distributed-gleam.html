@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-04-15 Sat 00:53 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gleam OTP Design Principles User's Guide</title>
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" href="tufte.css" type="text/css" />
+<meta http-equiv="Content-Security-Policy"  content="default-src 'self'; img-src https://*; child-src 'none';">
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Gleam OTP Design Principles User's Guide</h1>
+<p>
+This document is a work in progress and will be updated as time permits.
+</p>
+
+<div id="outline-container-orgbbcb6c4" class="outline-2">
+<h2 id="orgbbcb6c4">Overview</h2>
+<div class="outline-text-2" id="text-orgbbcb6c4">
+<p>
+The OTP design principles define how to structure Gleam code in terms of processes and modules.
+</p>
+</div>
+
+<div id="outline-container-orgfe2049e" class="outline-3">
+<h3 id="orgfe2049e">Supervisor Tree</h3>
+<div class="outline-text-3" id="text-orgfe2049e">
+<p>
+A fundamental idea of most BEAM based language is the ability to supervise a process, and be notified of its failure.
+This supervisory idea has roots in the erlang history and has become a well accepted method to deal with process failure.
+</p>
+
+<p>
+There can be a heirachy of workers and supervisors, otherwise known as "the supervision tree". 
+</p>
+
+<p>
+Workers are processes that perform computations, that is they have work to do.
+</p>
+
+<ul class="org-ul">
+<li>A supervisor can monitor the behaviour of workers.</li>
+<li>A supervisor can restart aworker if something goes wrong.</li>
+<li>A worker can notify a superivsor if something goes wrong.</li>
+<li>A supervisor has different modes of dealing with worker failure.</li>
+</ul>
+
+<p>
+Designing software that uses the supervision tree pattern  can allow a developer to create highly resiliant software.
+</p>
+
+<p>
+In the following figure, square boxes represents supervisors and circles represent workers:
+</p>
+
+
+<div id="org02d975f" class="figure">
+<p><img src="supervisors_and_processes.png" alt="supervisors_and_processes.png" />
+</p>
+</div>
+
+
+<p>
+Supervisors can supervise workers, and supervisors can supervise supervisors.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd8ff1f5" class="outline-3">
+<h3 id="orgd8ff1f5">Simple Processes example.</h3>
+<div class="outline-text-3" id="text-orgd8ff1f5">
+<p>
+Before understanding the worker/supervisor implementation,  We should create a basic example
+of starting a 'process' and sending messages to it.
+</p>
+
+<p>
+A process is not a OS level process, it is a 'thread' running within the single <a href="https://www.erlang.org/blog/a-brief-beam-primer/">BEAM</a> 
+virtual machine process. It doesn't come with the memory use and synchronization requirements that
+traditional operating sytem thread or processes require.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgefdfbfe" class="outline-3">
+<h3 id="orgefdfbfe">Starting a process.</h3>
+<div class="outline-text-3" id="text-orgefdfbfe">
+<p>
+A process can be started with "process.start", see the following:
+</p>
+
+<pre class="example">
+import gleam/erlang/process
+...
+let assert pid = process.start(running: start_process, linked: False)
+</pre>
+
+<p>
+The first parameter is the function to run within the newly spawned process.  This function has
+no arguements and returns no finished value, I like to use start_process to set the initial
+state, then enter the main loop which will continue to deal with messages sent to this process.
+</p>
+
+<p>
+The second parameter "linked: true", creates a "link" between two processes.
+If either of the proccesses participating ink a link terminates, it will send an exit message to
+the other participant.  The exit message will contain the reason of the terminated participant.
+</p>
+
+<p>
+In this simple example, there is no need to know if a process has terminated as no action will be taken.  This
+is not a supervisor.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org913f4e0" class="outline-3">
+<h3 id="org913f4e0">Sending messages</h3>
+<div class="outline-text-3" id="text-org913f4e0">
+<p>
+Gleam’s process requires type safety for both processes and messages.  When sending messages between
+processes, the first step is to have a 'subject' which references the spawned process.
+</p>
+
+<p>
+You can do this with process.new_subject, that makes a subject based in the current process context.
+</p>
+
+<p>
+Subject is an opaque type. An opaque type is a type where the constructors of that type arent
+exposed to other modules that import the type.  You must use the "new_subject" call to create a new subject.
+</p>
+
+<p>
+If the "new_subject" call is made in a different process, it would have different contents.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-gleam"><span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">my_subject</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">new_subject</span><span style="color: #FF4F00; background-color: #190700;">()</span>
+</pre>
+</div>
+
+<p>
+This reference is used to message the process that created the subject.  When a new process
+is started, unless a subject is created in this new process context and the subject messaged
+back to the parent process, the parent process will be unable to message the child.
+</p>
+
+<p>
+As messages are strictly typed, you must create a Type that can encapsulate the needs of the
+data being sent to the process, including subject data being sent between them.
+</p>
+
+<p>
+The example below shows a types used in both Sending and Receiving from this newly spawned process.
+</p>
+
+<p>
+ChannelResponse type (from the new process)
+</p>
+
+<div class="org-src-container">
+<pre class="src src-gleam"><span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">type</span> <span style="color: #FF7A00;">ChannelResponse</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+  <span style="color: #FF7A00;">ChildSubject</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF7A00;">Subject</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF7A00;">ChannelRequest</span><span style="color: #D04000; background-color: #190700;">)</span><span style="color: #E14400; background-color: #190700;">)</span>
+  <span style="color: #FF7A00;">Allocated</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00; font-style: italic;">id</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF7A00;">Int</span><span style="color: #E14400; background-color: #190700;">)</span>   <span style="color: #D05010; font-style: italic;">// additional message that the process can respond with.</span>
+  <span style="color: #FF7A00;">None</span>                 <span style="color: #D05010; font-style: italic;">// additional message that the process can respond with.</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+</pre>
+</div>
+
+<p>
+and the ChannelRequest type (to the new process)
+</p>
+
+<div class="org-src-container">
+<pre class="src src-gleam"><span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">type</span> <span style="color: #FF7A00;">ChannelRequest</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+   <span style="color: #FF7A00;">Allocate</span>
+   <span style="color: #FF7A00;">Show</span>
+   <span style="color: #FF7A00;">Free</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF7A00;">ChannelResponse</span><span style="color: #E14400; background-color: #190700;">)</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+</pre>
+</div>
+
+<p>
+As stated earlier, to be able to send to the process, a subject in the new process context will need to be sent
+to the parent process.
+</p>
+
+<p>
+This message will need to be captured and used when making the request.  Below is a sequence diagram showing the basics of
+starting processes.
+</p>
+
+
+<div id="org7361eb2" class="figure">
+<p><img src="hello-uml.png" alt="hello-uml.png" />
+</p>
+</div>
+
+<p>
+After the "Child subject" has been received by the parent process, it can be  used by the parent process
+or passed to another, However the typed messages to the Child must remain consistent. The "Send" channel
+remains the same as long as the Child Process lives.
+</p>
+
+<p>
+Messages can be set to a target subject with the 'process.send'.   The example allocate below is a simple
+message of type "ChannelRequest" with no parameters.  More complex data can be passed with more complex Types
+if required.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-gleam"><span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">send</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">target</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF7A00;">Allocate</span><span style="color: #FF4F00; background-color: #190700;">)</span>
+</pre>
+</div>
+
+<p>
+Listed below is a module (derived from its filename called "aserver"  It is an example of a process sending a
+message to another process using the method described above.
+</p>
+
+<p>
+It contains some more advanced functionality that we will touch on later.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-gleam">
+<span style="color: #FF5A00;">import</span> gleam/io
+<span style="color: #FF5A00;">import</span> gleam/int
+<span style="color: #FF5A00;">import</span> gleam/list
+<span style="color: #FF5A00;">import</span> gleam/erlang/process<span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF4F00; background-color: #190700;">{</span><span style="color: #FF7A00;">Subject</span><span style="color: #FF4F00; background-color: #190700;">}</span>
+<span style="color: #FF5A00;">import</span> gleam/result
+<span style="color: #FF5A00;">import</span> gleam/function
+<span style="color: #FF5A00;">import</span> gleam/iterator<span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF4F00; background-color: #190700;">{</span><span style="color: #F07010;">iterate</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #F07010;">take</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #F07010;">to_list</span><span style="color: #FF4F00; background-color: #190700;">}</span>
+
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">type</span> <span style="color: #FF7A00;">ChannelResponse</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+  <span style="color: #FF7A00;">Allocated</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00; font-style: italic;">id</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF7A00;">Int</span><span style="color: #E14400; background-color: #190700;">)</span>
+  <span style="color: #FF7A00;">None</span>
+  <span style="color: #FF7A00;">ChildSubject</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF7A00;">Subject</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF7A00;">ChannelRequest</span><span style="color: #D04000; background-color: #190700;">)</span><span style="color: #E14400; background-color: #190700;">)</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">type</span> <span style="color: #FF7A00;">ChannelRequest</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+   <span style="color: #FF7A00;">Allocate</span>
+   <span style="color: #FF7A00;">Show</span>
+   <span style="color: #FF7A00;">Free</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF7A00;">ChannelResponse</span><span style="color: #E14400; background-color: #190700;">)</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">alloc</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">target</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">mine</span> <span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+   <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">send</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">target</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF7A00;">Allocate</span><span style="color: #E14400; background-color: #190700;">)</span>
+   <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF7A00;">Ok</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">allocation</span><span style="color: #E14400; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">receive</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">mine</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF3A00; font-style: italic;">within</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF3A00;">1000</span><span style="color: #E14400; background-color: #190700;">)</span>
+   <span style="color: #FF4A00;">allocation</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">free</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">target</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">mine</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">channel</span><span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+   <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">send</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">target</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF7A00;">Free</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">channel</span><span style="color: #D04000; background-color: #190700;">)</span><span style="color: #E14400; background-color: #190700;">)</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">show</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">target</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">mine</span><span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+   <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">send</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">target</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF7A00;">Show</span><span style="color: #E14400; background-color: #190700;">)</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #D05010; font-style: italic;">// generate a list of 100 channels for init.</span>
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">generate_channel_list</span><span style="color: #FF4F00; background-color: #190700;">()</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+ <span style="color: #F07010;">iterate</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00;">1</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF5A00;">fn</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">n</span><span style="color: #D04000; background-color: #190700;">)</span> <span style="color: #D04000; background-color: #190700;">{</span> <span style="color: #FF3A00;">1</span><span style="color: #FF5A00;">+</span><span style="color: #FF4A00;">n</span> <span style="color: #D04000; background-color: #190700;">}</span><span style="color: #E14400; background-color: #190700;">)</span> <span style="color: #FF5A00;">|&gt;</span> <span style="color: #F07010;">take</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00;">100</span><span style="color: #E14400; background-color: #190700;">)</span> <span style="color: #FF5A00;">|&gt;</span> <span style="color: #F07010;">to_list</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">main</span><span style="color: #FF4F00; background-color: #190700;">()</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+  <span style="color: #FF4A00;">io</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">println</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF6A00;">"Hello from non_gen_server!"</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #D05010; font-style: italic;">// similar to a channel between the process to start</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">my_subject</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">new_subject</span><span style="color: #E14400; background-color: #190700;">()</span>
+
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">thing</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF5A00;">fn</span><span style="color: #E14400; background-color: #190700;">()</span> <span style="color: #E14400; background-color: #190700;">{</span> <span style="color: #F07010;">init</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">my_subject</span><span style="color: #D04000; background-color: #190700;">)</span><span style="color: #E14400; background-color: #190700;">}</span>
+
+  <span style="color: #D05010; font-style: italic;">// why do i block here ?</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF4A00;">pid</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">start</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00; font-style: italic;">running</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">thing</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF3A00; font-style: italic;">linked</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF7A00;">True</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #D05010; font-style: italic;">// the channel from the child</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF7A00;">ChildSubject</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">child_subject</span><span style="color: #E14400; background-color: #190700;">)</span><span style="color: #FFE0C0; background-color: #190700;">=</span>
+    <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">receive</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">my_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF3A00; font-style: italic;">within</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF3A00;">100_000_000</span><span style="color: #E14400; background-color: #190700;">)</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">result</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">unwrap</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF7A00;">None</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #D05010; font-style: italic;">// show the default channels.</span>
+  <span style="color: #F07010;">show</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">child_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">my_subject</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #D05010; font-style: italic;">// get three channels.</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">channel1</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #F07010;">alloc</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">child_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">my_subject</span><span style="color: #E14400; background-color: #190700;">)</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">channel2</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #F07010;">alloc</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">child_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">my_subject</span><span style="color: #E14400; background-color: #190700;">)</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">channel3</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #F07010;">alloc</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">child_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">my_subject</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #D05010; font-style: italic;">// use the channels here.</span>
+  <span style="color: #D05010; font-style: italic;">// use_channels</span><span style="color: #E14400; font-style: italic;">(</span><span style="color: #D05010; font-style: italic;">channel1, channel2, channel3</span><span style="color: #E14400; font-style: italic;">)</span>
+
+  <span style="color: #D05010; font-style: italic;">// show the free channel list:</span>
+  <span style="color: #F07010;">show</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">child_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">my_subject</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #D05010; font-style: italic;">// return the channels, as we're done with them.</span>
+  <span style="color: #F07010;">free</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">child_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">my_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">channel1</span><span style="color: #E14400; background-color: #190700;">)</span>
+  <span style="color: #F07010;">free</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">child_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">my_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">channel2</span><span style="color: #E14400; background-color: #190700;">)</span>
+  <span style="color: #F07010;">free</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">child_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">my_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">channel3</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #D05010; font-style: italic;">// show the newly used list, they will be out of order.</span>
+  <span style="color: #F07010;">show</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">child_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">my_subject</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #FF7A00;">Ok</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">sleep_forever</span><span style="color: #D04000; background-color: #190700;">()</span><span style="color: #E14400; background-color: #190700;">)</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">init</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">parent_subject</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF7A00;">Subject</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF7A00;">ChannelResponse</span><span style="color: #E14400; background-color: #190700;">)</span><span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+
+  <span style="color: #D05010; font-style: italic;">// create another subject, that other processes can use</span>
+  <span style="color: #D05010; font-style: italic;">// to address this new process.</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">my_subject</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">new_subject</span><span style="color: #E14400; background-color: #190700;">()</span>
+
+  <span style="color: #D05010; font-style: italic;">// send the new subject back to the parent, using its subject.</span>
+  <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">send</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">parent_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF7A00;">ChildSubject</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">my_subject</span><span style="color: #D04000; background-color: #190700;">)</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #D05010; font-style: italic;">// start the main process loop</span>
+  <span style="color: #F07010;">loop</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">my_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">parent_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #F07010;">generate_channel_list</span><span style="color: #D04000; background-color: #190700;">()</span><span style="color: #E14400; background-color: #190700;">)</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">loop</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">my_subject</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF7A00;">Subject</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF7A00;">ChannelRequest</span><span style="color: #E14400; background-color: #190700;">)</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">parent_subject</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF7A00;">Subject</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF7A00;">ChannelResponse</span><span style="color: #E14400; background-color: #190700;">)</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">channels</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF7A00;">List</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF7A00;">Int</span><span style="color: #E14400; background-color: #190700;">)</span><span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+
+  <span style="color: #D05010; font-style: italic;">// add a selector to listen from parent process.</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">sel</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
+    <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">new_selector</span><span style="color: #E14400; background-color: #190700;">()</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">selecting</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00; font-style: italic;">for</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">my_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF3A00; font-style: italic;">mapping</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">function</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">identity</span> <span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #D05010; font-style: italic;">// block forever on waiting for a message.</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">msg</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">select_forever</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">sel</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">new_channels</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>  <span style="color: #FF5A00;">case</span> <span style="color: #FF4A00;">msg</span> <span style="color: #E14400; background-color: #190700;">{</span>
+     <span style="color: #FF7A00;">Allocate</span><span style="color: #D04000; background-color: #190700;">()</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #D04000; background-color: #190700;">{</span>
+       <span style="color: #D05010; font-style: italic;">// choose the first value, return rest for new state</span>
+       <span style="color: #FF5A00;">let</span> <span style="color: #AA3A00; background-color: #190700;">[</span><span style="color: #FF4A00;">next_available</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FFE0C0; background-color: #190700;">..</span> <span style="color: #FF4A00;">rest</span> <span style="color: #AA3A00; background-color: #190700;">]</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF4A00;">channels</span>
+       <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">send</span><span style="color: #AA3A00; background-color: #190700;">(</span><span style="color: #FF4A00;">parent_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF7A00;">Allocated</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">next_available</span><span style="color: #FF4F00; background-color: #190700;">)</span><span style="color: #AA3A00; background-color: #190700;">)</span>
+       <span style="color: #FF4A00;">io</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">debug</span><span style="color: #AA3A00; background-color: #190700;">(</span><span style="color: #FF6A00;">"allocating channel "</span> <span style="color: #FF5A00;">&lt;&gt;</span> <span style="color: #FF4A00;">int</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">to_string</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">next_available</span><span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #AA3A00; background-color: #190700;">)</span>
+       <span style="color: #FF4A00;">rest</span>
+     <span style="color: #D04000; background-color: #190700;">}</span>
+     <span style="color: #FF7A00;">Free</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">id</span><span style="color: #D04000; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #D04000; background-color: #190700;">{</span>
+      <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF7A00;">Allocated</span><span style="color: #AA3A00; background-color: #190700;">(</span><span style="color: #FF4A00;">channel</span><span style="color: #AA3A00; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF4A00;">id</span>
+      <span style="color: #FF4A00;">io</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">debug</span><span style="color: #AA3A00; background-color: #190700;">(</span><span style="color: #FF6A00;">"Freeing channel: "</span> <span style="color: #FF5A00;">&lt;&gt;</span> <span style="color: #FF4A00;">int</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">to_string</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">channel</span><span style="color: #FF4F00; background-color: #190700;">)</span><span style="color: #AA3A00; background-color: #190700;">)</span>
+      <span style="color: #FF4A00;">list</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">append</span><span style="color: #AA3A00; background-color: #190700;">(</span><span style="color: #FF4F00; background-color: #190700;">[</span><span style="color: #FF4A00;">channel</span><span style="color: #FF4F00; background-color: #190700;">]</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">channels</span><span style="color: #AA3A00; background-color: #190700;">)</span>
+     <span style="color: #D04000; background-color: #190700;">}</span>
+     <span style="color: #FF7A00;">Show</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #D04000; background-color: #190700;">{</span>
+      <span style="color: #FF4A00;">io</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">debug</span><span style="color: #AA3A00; background-color: #190700;">(</span><span style="color: #FF6A00;">"Available channels: !"</span><span style="color: #AA3A00; background-color: #190700;">)</span>
+      <span style="color: #FF4A00;">io</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">debug</span><span style="color: #AA3A00; background-color: #190700;">(</span><span style="color: #FF4A00;">channels</span><span style="color: #AA3A00; background-color: #190700;">)</span>
+      <span style="color: #FF4A00;">channels</span>
+     <span style="color: #D04000; background-color: #190700;">}</span>
+  <span style="color: #E14400; background-color: #190700;">}</span>
+
+  <span style="color: #F07010;">loop</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">my_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">parent_subject</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">new_channels</span><span style="color: #E14400; background-color: #190700;">)</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9712164" class="outline-3">
+<h3 id="org9712164">The Worker</h3>
+<div class="outline-text-3" id="text-org9712164">
+<p>
+PUT WORKER EXAMPLE HERE
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2bbe7f5" class="outline-3">
+<h3 id="org2bbe7f5">The supervisor</h3>
+<div class="outline-text-3" id="text-org2bbe7f5">
+<p>
+PUT SUPERVISOR EXAMPLE HERE
+</p>
+</div>
+</div>
+
+<div id="outline-container-org13561f9" class="outline-3">
+<h3 id="org13561f9">Round the ring</h3>
+<div class="outline-text-3" id="text-org13561f9">
+<p>
+DESCRIBE RING DEMO HERE AND ADD SOURCE.
+</p>
+
+
+<p>
+References: gleam otp source for <a href="https://github.com/gleam-lang/otp/blob/main/src/gleam/otp/supervisor.gleam">supervisors</a>.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0e2be9a" class="outline-2">
+<h2 id="org0e2be9a">Distribution</h2>
+<div class="outline-text-2" id="text-org0e2be9a">
+<p>
+LINK UP EXAMPLE DISTRIBUTION LIBRARY HERE
+</p>
+</div>
+
+<div id="outline-container-org6bd605d" class="outline-3">
+<h3 id="org6bd605d">Starting up nodes.</h3>
+<div class="outline-text-3" id="text-org6bd605d">
+<p>
+Setup example here.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5cd04ea" class="outline-3">
+<h3 id="org5cd04ea">Spawning a process on another node.</h3>
+</div>
+
+<div id="outline-container-orgb168579" class="outline-3">
+<h3 id="orgb168579">Finding processes on another node</h3>
+</div>
+
+<div id="outline-container-orgc8c093f" class="outline-3">
+<h3 id="orgc8c093f">Gleam process registry ?</h3>
+</div>
+</div>
+
+
+<div id="outline-container-org3920e77" class="outline-2">
+<h2 id="org3920e77">Resources:&#xa0;&#xa0;&#xa0;<span class="tag"><span class="todo">todo</span></span></h2>
+<div class="outline-text-2" id="text-org3920e77">
+</div>
+</div>
+</div>
+</body>
+</html>
