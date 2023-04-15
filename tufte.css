@@ -470,3 +470,8 @@ label.margin-toggle:not(.sidenote-number) {
         width: 100%;
     }
 }
+
+
+pre.src-gleam:before  { content: 'Gleam'; }
+
+

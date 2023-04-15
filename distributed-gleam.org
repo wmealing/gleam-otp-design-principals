@@ -5,8 +5,6 @@
 #+OPTIONS: author:nil date:nil
 #+OPTIONS: html-postamble:nil
 #+STARTUP: inlineimages
-
-
 #+HTML_HEAD: <link rel="stylesheet" href="tufte.css" type="text/css" />
 #+HTML_HEAD_EXTRA: <meta http-equiv="Content-Security-Policy"  content="default-src 'self'; img-src https://*; child-src 'none';">
 
@@ -21,11 +19,11 @@ The OTP design principles define how to structure Gleam code in terms of process
 A fundamental idea of most BEAM based language is the ability to supervise a process, and be notified of its failure.
 This supervisory idea has roots in the erlang history and has become a well accepted method to deal with process failure.
 
-There can be a heirachy of workers and supervisors, otherwise known as "the supervision tree". 
+There can be a heirachy of workers and supervisors, otherwise known as "the supervision tree".
 
 Workers are processes that perform computations, that is they have work to do.
 
-- A supervisor can monitor the behaviour of workers. 
+- A supervisor can monitor the behaviour of workers.
 - A supervisor can restart aworker if something goes wrong.
 - A worker can notify a superivsor if something goes wrong.
 - A supervisor has different modes of dealing with worker failure.
@@ -74,7 +72,7 @@ Supervisors can supervise workers, and supervisors can supervise supervisors.
 Before understanding the worker/supervisor implementation,  We should create a basic example
 of starting a 'process' and sending messages to it.
 
-A process is not a OS level process, it is a 'thread' running within the single [[https://www.erlang.org/blog/a-brief-beam-primer/][BEAM]] 
+A process is not a OS level process, it is a 'thread' running within the single [[https://www.erlang.org/blog/a-brief-beam-primer/][BEAM]].
 virtual machine process. It doesn't come with the memory use and synchronization requirements that
 traditional operating sytem thread or processes require.
 
@@ -310,16 +308,51 @@ It contains some more advanced functionality that we will touch on later.
 #+END_SRC
 
 #+begin_comment
-Remember not name your module the same name as other erlang modules or you will end up with very strange results.
+Remember not name the module the same name as other erlang modules or unexpected behavior will occur.
 #+end_comment
+
+
+** Gleam OTP
+
+Gleam has its own library to simplify building programs using the actor model.  The current status of the gleam library
+"experimental" however its been usable for some time.
+
+Some of the OTP ideas from erlang are not implemented or do not cleanly map across to gleam, so they will be omitted.  If
+they become feasible or sane at a later date, this document could be updated.
+
 
 ** The Worker
 
-PUT WORKER EXAMPLE HERE
+
+
+
+Describe its not .. anything but a process.
+
+#+begin_src gleam
+pub fn worker(start: fn(a) -> Result(Subject(b), StartError)) -> ChildSpec( b,  a,  a )
+#+end_src
 
 ** The supervisor
 
-PUT SUPERVISOR EXAMPLE HERE
+
+Loks almost exactly the same as the worker spec, wow.
+
+Prepare a new supervisor type child.
+
+#+begin_src gleam
+pub fn supervisor(start: fn(a) -> Result(Subject(b), StartError)) -> ChildSpec( b,  a,  a )
+#+end_src
+
+#+begin_src gleam
+pub fn add(children: Children(a), child_spec: ChildSpec(b, a, c)) -> Children(c)
+#+end_src
+
+Add a child to the collection of children of the supervisor
+
+
+
+
+
 
 ** Round the ring
 
