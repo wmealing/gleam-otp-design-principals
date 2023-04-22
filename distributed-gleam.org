@@ -323,14 +323,37 @@ they become feasible or sane at a later date, this document could be updated.
 
 ** The Worker
 
+Gleam OTP formalises the "worker to supervisor specification"
 
+The worker function requirement takes a function which returns a result or an error, and
+returns a childspec.
 
-
-Describe its not .. anything but a process.
+You can pass this on toa  supervisor for.. supervision... joy.
 
 #+begin_src gleam
-pub fn worker(start: fn(a) -> Result(Subject(b), StartError)) -> ChildSpec( b,  a,  a )
+  pub fn worker(start: fn(a) -> Result(Subject(b), StartError)) -> ChildSpec( b,  a,  a )
 #+end_src
+
+
+
+#+begin_src gleam
+  let child =
+    worker(fn(name) {
+      actor.start_spec(actor.Spec(
+        init: fn() {
+          process.send(subject, #(name, process.self()))
+          actor.Ready(name, process.new_selector())
+        },
+        init_timeout: 10,
+        loop: fn(_msg, state) { actor.Continue(state) },
+      ))
+    })
+#+end_src
+
+
+
+  Describe its not .. anything but a process.
+
 
 ** The supervisor
 
