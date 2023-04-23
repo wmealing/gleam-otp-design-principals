@@ -320,6 +320,75 @@ Gleam has its own library to simplify building programs using the actor model.  
 Some of the OTP ideas from erlang are not implemented or do not cleanly map across to gleam, so they will be omitted.  If
 they become feasible or sane at a later date, this document could be updated.
 
+** Simple process example as an 'actor'
+
+Gleams actor implementation only runs on the erlang VM.  Actors take advantage of the underlying beam vm concurrency features
+which allows communication via message passing of typed messages.
+
+Each message is explicitly typed and tracable. The messages are received in a per-process mailbox and
+stored in the order in which they are received.  Messages are stored in the mailbox until the process
+reads them or terminates.
+
+Erlangs tools such as the [[https://www.erlang.org/doc/apps/observer/observer_ug.html][Observer utility]], can be used see the mailbox of each process.
+
+Below we show an example of a basic process being started.  It uses the similar mechanisms
+of using subjects for communiction but extracts it into labeled functions of 'init' and 'loop'
+functions.
+
+The 'init' function sets up the state.
+The 'loop' function handles messages being sent to the 'actor' process.
+
+
+
+#+begin_src gleam
+  import gleam/io
+  import gleam/otp/actor
+  import gleam/erlang/process
+
+  import gleam/erlang
+
+  pub fn main() {
+
+    let parent_subject = process.new_subject()
+
+    let actor =
+      actor.start_spec(actor.Spec(
+        init: fn() {
+          let final = "message from init function"
+          process.send(parent_subject, final)
+          actor.Ready(0, process.new_selector())
+        },
+        init_timeout: 1000,
+        loop: fn(msg, state) {
+          io.debug(" IN CHILD: loop function triggered")
+          io.debug(" IN CHILD: Message from parent in loop: " <> msg)
+          actor.Continue(state)
+        },
+      ))
+
+    let assert Ok(actor_subject) = actor
+
+    // get the message from the init function.
+    let assert Ok(msg) = process.receive(parent_subject, 10)
+
+    io.debug("IN PARENT: " <> msg)
+
+    // send a message to the actor.
+    process.send(actor_subject, "Hello from parent")
+
+    let actor_pid = process.subject_owner(actor_subject)
+
+    // send exit, is this out of band, not a standard message.
+    process.send_exit(actor_pid)
+
+    io.println("Press Ctrl-c a enter to exit.")
+  
+    Ok(process.sleep_forever())
+
+  }
+#+end_src
+
+
 
 ** The Worker
 
