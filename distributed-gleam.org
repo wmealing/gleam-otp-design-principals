@@ -177,6 +177,10 @@ message to another process using the method described above.
 
 It contains some more advanced functionality that we will touch on later.
 
+#+begin_comment
+Remember not name a module the same name as other erlang modules or unexpected behavior will occur.
+#+end_comment
+
 #+BEGIN_SRC gleam
 
   import gleam/io
@@ -307,9 +311,10 @@ It contains some more advanced functionality that we will touch on later.
   }
 #+END_SRC
 
-#+begin_comment
-Remember not name the module the same name as other erlang modules or unexpected behavior will occur.
-#+end_comment
+This produces output like 
+
+
+
 
 
 ** Gleam OTP
@@ -474,3 +479,7 @@ Setup example here.
 :END:
 
 
+* With thanks:
+
+Thanks to : rawhat for helping out with debugging issues.
+            McNimble for multiple fixes and encouragement. 

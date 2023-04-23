@@ -3,8 +3,18 @@ import gleam/otp/actor
 import gleam/erlang
 import gleam/erlang/process
 
+
+
+
+pub external fn observer() -> Nil =
+  "observer" "start"
+
 pub fn main() {
+
+  observer()
+  
   let parent_subject = process.new_subject()
+  io.debug(parent_subject)
 
   let actor =
     actor.start_spec(actor.Spec(
@@ -21,6 +31,7 @@ pub fn main() {
       },
     ))
 
+  io.debug(actor)
   let assert Ok(actor_subject) = actor
 
   // get the message from the init function.
