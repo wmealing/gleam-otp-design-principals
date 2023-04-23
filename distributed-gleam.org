@@ -474,9 +474,11 @@ Setup example here.
 
           
 * [#A] Resources:                                                      :todo:
-:PROPERTIES:
-:Effort:   1:00
-:END:
+
+- Erlang design principals: https://www.erlang.org/doc/design_principles/users_guide.html
+- McNimbles OTP demo: https://code-change.nl/gleam-blog/20230225-gleam-otp.html
+- Gleam OTP on hex.pm https://hex.pm/packages/gleam_otp
+  
 
 
 * With thanks:
