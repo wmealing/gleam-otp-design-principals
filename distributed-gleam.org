@@ -481,5 +481,7 @@ Setup example here.
 
 * With thanks:
 
-Thanks to : rawhat for helping out with debugging issues.
-            McNimble for multiple fixes and encouragement. 
+Thanks to :
+ - rawhat for helping out with debugging issues.
+ - McNimble for multiple fixes and encouragement.
+ 
