@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-04-24 Mon 00:30 -->
+<!-- 2023-04-24 Mon 00:41 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Gleam OTP Design Principles User's Guide</title>
@@ -202,17 +202,17 @@
 This document is a work in progress and will be updated as time permits.
 </p>
 
-<div id="outline-container-orgab1c80a" class="outline-2">
-<h2 id="orgab1c80a">Overview</h2>
-<div class="outline-text-2" id="text-orgab1c80a">
+<div id="outline-container-org2b9227b" class="outline-2">
+<h2 id="org2b9227b">Overview</h2>
+<div class="outline-text-2" id="text-org2b9227b">
 <p>
 The OTP design principles define how to structure Gleam code in terms of processes and modules.
 </p>
 </div>
 
-<div id="outline-container-orgf5bd4ae" class="outline-3">
-<h3 id="orgf5bd4ae">Supervisor Tree</h3>
-<div class="outline-text-3" id="text-orgf5bd4ae">
+<div id="outline-container-org25b8953" class="outline-3">
+<h3 id="org25b8953">Supervisor Tree</h3>
+<div class="outline-text-3" id="text-org25b8953">
 <p>
 A fundamental idea of most BEAM based language is the ability to supervise a process, and be notified of its failure.
 This supervisory idea has roots in the erlang history and has become a well accepted method to deal with process failure.
@@ -242,7 +242,7 @@ In the following figure, square boxes represents supervisors and circles represe
 </p>
 
 
-<div id="org19b4085" class="figure">
+<div id="orgbd32272" class="figure">
 <p><img src="supervisors_and_processes.png" alt="supervisors_and_processes.png" />
 </p>
 </div>
@@ -254,9 +254,9 @@ Supervisors can supervise workers, and supervisors can supervise supervisors.
 </div>
 </div>
 
-<div id="outline-container-org03b457b" class="outline-3">
-<h3 id="org03b457b">Simple Processes example.</h3>
-<div class="outline-text-3" id="text-org03b457b">
+<div id="outline-container-orge3d9514" class="outline-3">
+<h3 id="orge3d9514">Simple Processes example.</h3>
+<div class="outline-text-3" id="text-orge3d9514">
 <p>
 Before understanding the worker/supervisor implementation,  We should create a basic example
 of starting a 'process' and sending messages to it.
@@ -270,9 +270,9 @@ traditional operating sytem thread or processes require.
 </div>
 </div>
 
-<div id="outline-container-orgf12d706" class="outline-3">
-<h3 id="orgf12d706">Starting a process.</h3>
-<div class="outline-text-3" id="text-orgf12d706">
+<div id="outline-container-org5c5b593" class="outline-3">
+<h3 id="org5c5b593">Starting a process.</h3>
+<div class="outline-text-3" id="text-org5c5b593">
 <p>
 A process can be started with "process.start", see the following:
 </p>
@@ -302,9 +302,9 @@ is not a supervisor.
 </div>
 </div>
 
-<div id="outline-container-orge09bc14" class="outline-3">
-<h3 id="orge09bc14">Sending messages</h3>
-<div class="outline-text-3" id="text-orge09bc14">
+<div id="outline-container-org38a0917" class="outline-3">
+<h3 id="org38a0917">Sending messages</h3>
+<div class="outline-text-3" id="text-org38a0917">
 <p>
 Gleam’s process requires type safety for both processes and messages.  When sending messages between
 processes, the first step is to have a 'subject' which references the spawned process.
@@ -380,7 +380,7 @@ starting processes.
 </p>
 
 
-<div id="org663ab12" class="figure">
+<div id="orgd3adcf6" class="figure">
 <p><img src="hello-uml.png" alt="hello-uml.png" />
 </p>
 </div>
@@ -547,15 +547,15 @@ This creates output like: (It will be slightly different on your system)
 </p>
 
 
-<pre class="example" id="org0c775cb">
+<pre class="example" id="org08fba0f">
 TODO: generate example output code here.
 </pre>
 </div>
 </div>
 
-<div id="outline-container-orgaa8f099" class="outline-3">
-<h3 id="orgaa8f099">Gleam OTP</h3>
-<div class="outline-text-3" id="text-orgaa8f099">
+<div id="outline-container-orga7d3d55" class="outline-3">
+<h3 id="orga7d3d55">Gleam OTP</h3>
+<div class="outline-text-3" id="text-orga7d3d55">
 <p>
 Gleam has its own library to simplify building programs using the actor model.  The current status of the gleam library
 "experimental" however its been usable for some time.
@@ -568,9 +568,9 @@ they become feasible or sane at a later date, this document could be updated.
 </div>
 </div>
 
-<div id="outline-container-org5e6bd39" class="outline-3">
-<h3 id="org5e6bd39">Simple process example as an 'actor'</h3>
-<div class="outline-text-3" id="text-org5e6bd39">
+<div id="outline-container-org2e3447d" class="outline-3">
+<h3 id="org2e3447d">Simple process example as an 'actor'</h3>
+<div class="outline-text-3" id="text-org2e3447d">
 <p>
 Gleams actor implementation only runs on the erlang VM.  Actors take advantage of the underlying beam vm concurrency features
 which allows communication via message passing of typed messages.
@@ -660,7 +660,7 @@ function, however this could be added as 'state' during the init function.
 The output should be something like the following:
 </p>
 
-<pre class="example" id="orgca5f6bb">
+<pre class="example" id="org43a6b12">
 "IN PARENT: message from init function"
 " IN CHILD: loop function triggered"
 " IN CHILD: Message from parent in loop: Hello from parent"
@@ -683,17 +683,42 @@ and defining an external function.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-gleam"><span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">external</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">observer</span><span style="color: #FF4F00; background-color: #190700;">()</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF7A00;">Nil</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
+<pre class="src src-gleam"><span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">external</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">observer_start</span><span style="color: #FF4F00; background-color: #190700;">()</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF7A00;">Nil</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
   <span style="color: #FF6A00;">"observer"</span> <span style="color: #FF6A00;">"start"</span>
 </pre>
 </div>
+
+<p>
+This external 'observer:start()' can be started with observer_start() in gleam.  This should be early
+in the main() function.
+</p>
+
+<p>
+The process_id can be extracted from the subject, via the 'process.subject_owner' function.
+</p>
+
+<p>
+The send_exit function can send an 'out of band' exit message to terminate the process.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-gleam"><span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">actor_pid</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">subject_owner</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">actor_subject</span><span style="color: #FF4F00; background-color: #190700;">)</span>
+
+<span style="color: #D05010; font-style: italic;">// send exit, is this out of band, not a standard message.</span>
+<span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">send_exit</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">actor_pid</span><span style="color: #FF4F00; background-color: #190700;">)</span>
+</pre>
+</div>
+
+<p>
+The "send_exit" message type doesn't end up in the 'actor' loop function.
+</p>
 </div>
 </div>
 
 
-<div id="outline-container-org90c517f" class="outline-3">
-<h3 id="org90c517f">The Worker</h3>
-<div class="outline-text-3" id="text-org90c517f">
+<div id="outline-container-orgea6fb06" class="outline-3">
+<h3 id="orgea6fb06">The Worker</h3>
+<div class="outline-text-3" id="text-orgea6fb06">
 <p>
 Gleam OTP formalises the "worker to supervisor specification"
 </p>
@@ -738,9 +763,9 @@ Describe its not .. anything but a process.
 </div>
 
 
-<div id="outline-container-orgdc491c9" class="outline-3">
-<h3 id="orgdc491c9">The supervisor</h3>
-<div class="outline-text-3" id="text-orgdc491c9">
+<div id="outline-container-org41caad7" class="outline-3">
+<h3 id="org41caad7">The supervisor</h3>
+<div class="outline-text-3" id="text-org41caad7">
 <p>
 Loks almost exactly the same as the worker spec, wow.
 </p>
@@ -767,9 +792,9 @@ Add a child to the collection of children of the supervisor
 
 
 
-<div id="outline-container-org4b0b1db" class="outline-3">
-<h3 id="org4b0b1db">Round the ring</h3>
-<div class="outline-text-3" id="text-org4b0b1db">
+<div id="outline-container-org9556f8a" class="outline-3">
+<h3 id="org9556f8a">Round the ring</h3>
+<div class="outline-text-3" id="text-org9556f8a">
 <p>
 DESCRIBE RING DEMO HERE AND ADD SOURCE.
 </p>
@@ -781,39 +806,39 @@ References: gleam otp source for <a href="https://github.com/gleam-lang/otp/blob
 </div>
 </div>
 
-<div id="outline-container-orgf843b85" class="outline-2">
-<h2 id="orgf843b85">Distribution</h2>
-<div class="outline-text-2" id="text-orgf843b85">
+<div id="outline-container-orgfc937ce" class="outline-2">
+<h2 id="orgfc937ce">Distribution</h2>
+<div class="outline-text-2" id="text-orgfc937ce">
 <p>
 LINK UP EXAMPLE DISTRIBUTION LIBRARY HERE
 </p>
 </div>
 
-<div id="outline-container-orgea07356" class="outline-3">
-<h3 id="orgea07356">Starting up nodes.</h3>
-<div class="outline-text-3" id="text-orgea07356">
+<div id="outline-container-orga1148b6" class="outline-3">
+<h3 id="orga1148b6">Starting up nodes.</h3>
+<div class="outline-text-3" id="text-orga1148b6">
 <p>
 Setup example here.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgcf4ad28" class="outline-3">
-<h3 id="orgcf4ad28">Spawning a process on another node.</h3>
+<div id="outline-container-orga5ef492" class="outline-3">
+<h3 id="orga5ef492">Spawning a process on another node.</h3>
 </div>
 
-<div id="outline-container-org6ddba42" class="outline-3">
-<h3 id="org6ddba42">Finding processes on another node</h3>
+<div id="outline-container-org1442ef9" class="outline-3">
+<h3 id="org1442ef9">Finding processes on another node</h3>
 </div>
 
-<div id="outline-container-org093831c" class="outline-3">
-<h3 id="org093831c">Gleam process registry ?</h3>
+<div id="outline-container-orgf529435" class="outline-3">
+<h3 id="orgf529435">Gleam process registry ?</h3>
 </div>
 </div>
 
-<div id="outline-container-orgabb0586" class="outline-2">
-<h2 id="orgabb0586">Resources:</h2>
-<div class="outline-text-2" id="text-orgabb0586">
+<div id="outline-container-org063c514" class="outline-2">
+<h2 id="org063c514">Resources:</h2>
+<div class="outline-text-2" id="text-org063c514">
 <ul class="org-ul">
 <li>Erlang design principals: <a href="https://www.erlang.org/doc/design_principles/users_guide.html">https://www.erlang.org/doc/design_principles/users_guide.html</a></li>
 <li>McNimbles OTP demo: <a href="https://code-change.nl/gleam-blog/20230225-gleam-otp.html">https://code-change.nl/gleam-blog/20230225-gleam-otp.html</a></li>
@@ -822,9 +847,9 @@ Setup example here.
 </div>
 </div>
 
-<div id="outline-container-org218426f" class="outline-2">
-<h2 id="org218426f">Acknowledgements:</h2>
-<div class="outline-text-2" id="text-org218426f">
+<div id="outline-container-orgab9384f" class="outline-2">
+<h2 id="orgab9384f">Acknowledgements:</h2>
+<div class="outline-text-2" id="text-orgab9384f">
 <p>
 Thanks to :
 </p>

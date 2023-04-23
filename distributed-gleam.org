@@ -419,9 +419,25 @@ The observer utility is erlang code and can be started from gleam using the fore
 and defining an external function.
 
 #+begin_src gleam 
-pub external fn observer() -> Nil =
+pub external fn observer_start() -> Nil =
   "observer" "start"
 #+end_src
+
+This external 'observer:start()' can be started with observer_start() in gleam.  This should be early
+in the main() function.
+
+The process_id can be extracted from the subject, via the 'process.subject_owner' function.
+
+The send_exit function can send an 'out of band' exit message to terminate the process.
+
+#+begin_src gleam
+    let actor_pid = process.subject_owner(actor_subject)
+
+    // send exit, is this out of band, not a standard message.
+    process.send_exit(actor_pid)
+#+end_src
+
+The "send_exit" message type doesn't end up in the 'actor' loop function.
 
 
 ** The Worker
