@@ -344,7 +344,7 @@ functions.
 - The 'init' function sets up the state.
 - The 'loop' function handles messages being sent to the 'actor' process.
 
-Once a actor.Spec has been created it can be started with the actor.start_spec function.
+Once an actor.Spec has been created it can be started with the actor.start_spec function.
 
 In this simple example, you might notice that the actor can not message the parent process in the 'loop'
 function, however this could be added as 'state' during the init function.
