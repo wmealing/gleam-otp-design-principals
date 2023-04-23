@@ -311,10 +311,7 @@ Remember not name a module the same name as other erlang modules or unexpected b
   }
 #+END_SRC
 
-This produces output like 
-
-
-
+This creates output like: (It will be slightly different on your system)
 
 
 ** Gleam OTP
@@ -337,13 +334,16 @@ reads them or terminates.
 Erlangs tools such as the [[https://www.erlang.org/doc/apps/observer/observer_ug.html][Observer utility]], can be used see the mailbox of each process.
 
 Below we show an example of a basic process being started.  It uses the similar mechanisms
-of using subjects for communiction but extracts it into labeled functions of 'init' and 'loop'
-functions.
+of using subjects for communiction but uses the actor.Spec type to reduce the complexity to 'init' and 'loop'
+functions.  
 
 The 'init' function sets up the state.
 The 'loop' function handles messages being sent to the 'actor' process.
 
+Once a actor.Spec has been created it can be started with the actor.start_spec function.
 
+In this simple example, you might notice that the actor can not message the parent process in the 'loop'
+function, however this could be added as 'state' during the init function.
 
 #+begin_src gleam
   import gleam/io
@@ -387,11 +387,31 @@ The 'loop' function handles messages being sent to the 'actor' process.
     process.send_exit(actor_pid)
 
     io.println("Press Ctrl-c a enter to exit.")
-  
+
     Ok(process.sleep_forever())
 
   }
 #+end_src
+
+
+The output should be something like the following:
+
+#+begin_example
+"IN PARENT: message from init function"
+" IN CHILD: loop function triggered"
+" IN CHILD: Message from parent in loop: Hello from parent"
+press enter to terminate the actor
+Press Ctrl-c a enter to exit.
+^C
+BREAK: (a)bort (A)bort with dump (c)ontinue (p)roc info (i)nfo
+       (l)oaded (v)ersion (k)ill (D)b-tables (d)istribution
+a
+#+end_example
+
+We can modify the example to use erlangs built in [[https://www.erlang.org/doc/apps/observer/observer_ug.html][observer]] utility to observe the process
+being created.
+
+
 
 
 
@@ -448,13 +468,9 @@ Add a child to the collection of children of the supervisor
 
 
 
-
-
-
 ** Round the ring
 
 DESCRIBE RING DEMO HERE AND ADD SOURCE.
-
 
 References: gleam otp source for [[https://github.com/gleam-lang/otp/blob/main/src/gleam/otp/supervisor.gleam][supervisors]].
 
@@ -472,16 +488,13 @@ Setup example here.
 
 ** Gleam process registry ?
 
-          
-* [#A] Resources:                                                      :todo:
+* [#A] Resources:
 
 - Erlang design principals: https://www.erlang.org/doc/design_principles/users_guide.html
 - McNimbles OTP demo: https://code-change.nl/gleam-blog/20230225-gleam-otp.html
 - Gleam OTP on hex.pm https://hex.pm/packages/gleam_otp
-  
 
-
-* With thanks:
+* Acknowledgements:
 
 Thanks to :
  - rawhat for helping out with debugging issues.
