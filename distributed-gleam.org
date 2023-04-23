@@ -341,8 +341,8 @@ Below we show an example of a basic process being started.  It uses the similar 
 of using subjects for communiction but uses the actor.Spec type to reduce the complexity to 'init' and 'loop'
 functions.  
 
-The 'init' function sets up the state.
-The 'loop' function handles messages being sent to the 'actor' process.
+- The 'init' function sets up the state.
+- The 'loop' function handles messages being sent to the 'actor' process.
 
 Once a actor.Spec has been created it can be started with the actor.start_spec function.
 
