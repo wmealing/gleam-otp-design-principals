@@ -314,6 +314,10 @@ Remember not name a module the same name as other erlang modules or unexpected b
 This creates output like: (It will be slightly different on your system)
 
 
+#+begin_example
+TODO: generate example output code here.
+#+end_example
+
 ** Gleam OTP
 
 Gleam has its own library to simplify building programs using the actor model.  The current status of the gleam library
@@ -409,10 +413,15 @@ a
 #+end_example
 
 We can modify the example to use erlangs built in [[https://www.erlang.org/doc/apps/observer/observer_ug.html][observer]] utility to observe the process
-being created.
+being created and destroyed.
 
+The observer utility is erlang code and can be started from gleam using the foreign function interface
+and defining an external function.
 
-
+#+begin_src gleam 
+pub external fn observer() -> Nil =
+  "observer" "start"
+#+end_src
 
 
 ** The Worker
