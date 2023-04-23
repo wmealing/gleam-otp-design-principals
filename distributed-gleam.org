@@ -120,7 +120,7 @@ back to the parent process, the parent process will be unable to message the chi
 As messages are strictly typed, you must create a Type that can encapsulate the needs of the
 data being sent to the process, including subject data being sent between them.
 
-The example below shows a types used in both Sending and Receiving from this newly spawned process.
+The example below shows a types used in both sending and receiving from this newly spawned process.
 
 ChannelResponse type (from the new process)
 
@@ -142,7 +142,7 @@ pub type ChannelRequest {
 }
 #+END_SRC
 
-As stated earlier, to be able to send to the process, a subject in the new process context will need to be sent
+As stated earlier, to be able to send to the process a subject in the new process context will need to be sent
 to the parent process.
 
 This message will need to be captured and used when making the request.  Below is a sequence diagram showing the basics of
@@ -160,8 +160,8 @@ starting processes.
 #+RESULTS:
 [[file:hello-uml.png]]
 
-After the "Child subject" has been received by the parent process, it can be  used by the parent process
-or passed to another, However the typed messages to the Child must remain consistent. The "Send" channel
+After the "Child subject" has been received by the parent process, it can be used by the parent process
+or passed to another, however the typed messages to the child must remain consistent. The "Send" channel
 remains the same as long as the Child Process lives.
 
 Messages can be set to a target subject with the 'process.send'.   The example allocate below is a simple
