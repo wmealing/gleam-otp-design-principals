@@ -428,32 +428,37 @@ in the main() function.
 
 The process_id can be extracted from the subject, via the 'process.subject_owner' function.
 
-The send_exit function can send an 'out of band' exit message to terminate the process.
+
+*** Terminating the actor.
+
+We can also explicitly terminate the actor, when we are done with it.  When an actor is unsupervised
+it is considered
 
 #+begin_src gleam
-    let actor_pid = process.subject_owner(actor_subject)
+  let actor_pid = process.subject_owner(actor_subject)
 
-    // send exit, is this out of band, not a standard message.
-    process.send_exit(actor_pid)
+  // must 'kill' the actor.
+  process.kill(actor_pid)
+
 #+end_src
 
-The "send_exit" message type doesn't end up in the 'actor' loop function.
+The "kill" function sends a message.  If we modify the example we can see that after the kill signal has been
+sent to the process, observer will show one less process in the list.
 
+TODO: might show full example and screenshots.
 
 ** The Worker
 
-Gleam OTP formalises the "worker to supervisor specification"
+Gleam OTP formalises the "worker and supervisor" pattern.
 
 The worker function requirement takes a function which returns a result or an error, and
 returns a childspec.
 
-You can pass this on toa  supervisor for.. supervision... joy.
+You can pass this on to a supervisor for.. supervision... joy.
 
 #+begin_src gleam
   pub fn worker(start: fn(a) -> Result(Subject(b), StartError)) -> ChildSpec( b,  a,  a )
 #+end_src
-
-
 
 #+begin_src gleam
   let child =

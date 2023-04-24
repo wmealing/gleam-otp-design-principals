@@ -51,7 +51,10 @@ pub fn main() {
   let _discard = erlang.get_line("press enter to terminate the actor")
 
   // send exit, is this out of band, not a standard message.
-  process.send_exit(actor_pid)
+  // process.send_exit(actor_pid)
+
+  //
+  process.kill(actor_pid)
 
   io.println("Press Ctrl-c a enter to exit.")
   
