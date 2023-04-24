@@ -449,16 +449,25 @@ TODO: might show full example and screenshots.
 
 ** The Worker
 
-Gleam OTP formalises the "worker and supervisor" pattern.
+Gleam OTP formalises the "worker and supervisor" pattern.  Workers should always be children of a supervisor,
+but supervisors can supervise other supervisors.
 
 The worker function requirement takes a function which returns a result or an error, and
 returns a childspec.
 
-You can pass this on to a supervisor for.. supervision... joy.
-
 #+begin_src gleam
   pub fn worker(start: fn(a) -> Result(Subject(b), StartError)) -> ChildSpec( b,  a,  a )
 #+end_src
+
+#+begin_example
+    let actor =
+      actor.start_spec(actor.Spec(
+        init: fn() {
+#+end_example
+
+The 'worker' function appears very similiar (but not exactly the same) as the actor example above.
+
+NOTE i dont like the idea of 'child' name here, will find another.
 
 #+begin_src gleam
   let child =
@@ -474,9 +483,8 @@ You can pass this on to a supervisor for.. supervision... joy.
     })
 #+end_src
 
-
-
-  Describe its not .. anything but a process.
+It took accepts sent messages to be handled in the loop function with initial state being setup
+in the instance function.
 
 
 ** The supervisor
