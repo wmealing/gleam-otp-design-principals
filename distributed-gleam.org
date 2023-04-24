@@ -506,7 +506,6 @@ pub fn add(children: Children(a), child_spec: ChildSpec(b, a, c)) -> Children(c)
 
 Add a child to the collection of children of the supervisor
 
-
 #+begin_src gleam
   supervisor.start_spec(supervisor.Spec(
      argument: 1,
@@ -519,30 +518,48 @@ Add a child to the collection of children of the supervisor
        |> add(child)
      },
    ))
-  
+
 #+end_src
-
-** Round the ring
-
-DESCRIBE RING DEMO HERE AND ADD SOURCE.
 
 References: gleam otp source for [[https://github.com/gleam-lang/otp/blob/main/src/gleam/otp/supervisor.gleam][supervisors]].
 
+** Round the ring benchmark.
+
+In his book Programming Erlang, Joe Armstrong asks:
+
+Write a ring benchmark. Create N processes in a ring. Send a message
+round the ring M times so that a total of N * M messages get sent.
+Time how long this takes for different values of N and M.
+
+#+begin_src gleam
+// TODO: write a simple example.
+#+end_src
+
 * Distribution
 
-LINK UP EXAMPLE DISTRIBUTION LIBRARY HERE
+Explain what distribution means in erlang, and what it means to gleam.
+
+Explain what it means to "start" the distribution.
+
+Explain cookies and using tls instead of plain
 
 ** Starting up nodes.
 
-Setup example here.
+Starting up nodes, firewall rules, mention the ports.
 
 ** Spawning a process on another node.
 
+Demonstrate starting a process on another node.
+
 ** Finding processes on another node
+
+Demonstrate finding a process on another node.
 
 ** Gleam process registry ?
 
-* [#A] Resources:
+This doesn't exist, should it? how do i find processes on another node.
+
+*  Resources:
 
 - Erlang design principals: https://www.erlang.org/doc/design_principles/users_guide.html
 - McNimbles OTP demo: https://code-change.nl/gleam-blog/20230225-gleam-otp.html
