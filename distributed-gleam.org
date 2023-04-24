@@ -486,6 +486,8 @@ NOTE i dont like the idea of 'child' name here, will find another.
 It took accepts sent messages to be handled in the loop function with initial state being setup
 in the instance function.
 
+This worker is not 'started' it merely exists as a specification to be used by a supervisor.
+
 
 ** The supervisor
 
@@ -505,6 +507,20 @@ pub fn add(children: Children(a), child_spec: ChildSpec(b, a, c)) -> Children(c)
 Add a child to the collection of children of the supervisor
 
 
+#+begin_src gleam
+  supervisor.start_spec(supervisor.Spec(
+     argument: 1,
+     frequency_period: 1,
+     max_frequency: 5,
+     init: fn(children) {
+       children
+       |> add(child)
+       |> add(child)
+       |> add(child)
+     },
+   ))
+  
+#+end_src
 
 ** Round the ring
 
