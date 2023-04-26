@@ -531,8 +531,12 @@ Write a ring benchmark. Create N processes in a ring. Send a message
 round the ring M times so that a total of N * M messages get sent.
 Time how long this takes for different values of N and M.
 
+In this example the worker/supervisor requirements are not required.  It
+can be acheived with a ring of actors.  In this ring, each actor needs
+to contain the subject of the next actor that it will need ot message.
+
 #+begin_src gleam
-// TODO: write a simple example.
+
 #+end_src
 
 * Distribution
