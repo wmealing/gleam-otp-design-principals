@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-04-24 Mon 23:51 -->
+<!-- 2023-04-30 Sun 00:40 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Gleam OTP Design Principles User's Guide</title>
@@ -202,17 +202,17 @@
 This document is a work in progress and will be updated as time permits.
 </p>
 
-<div id="outline-container-org3538bc6" class="outline-2">
-<h2 id="org3538bc6">Overview</h2>
-<div class="outline-text-2" id="text-org3538bc6">
+<div id="outline-container-org08ec6fb" class="outline-2">
+<h2 id="org08ec6fb">Overview</h2>
+<div class="outline-text-2" id="text-org08ec6fb">
 <p>
 The OTP design principles define how to structure Gleam code in terms of processes and modules.
 </p>
 </div>
 
-<div id="outline-container-org9820d76" class="outline-3">
-<h3 id="org9820d76">Supervisor Tree</h3>
-<div class="outline-text-3" id="text-org9820d76">
+<div id="outline-container-org31fa056" class="outline-3">
+<h3 id="org31fa056">Supervisor Tree</h3>
+<div class="outline-text-3" id="text-org31fa056">
 <p>
 A fundamental idea of most BEAM based language is the ability to supervise a process, and be notified of its failure.
 This supervisory idea has roots in the erlang history and has become a well accepted method to deal with process failure.
@@ -242,7 +242,7 @@ In the following figure, square boxes represents supervisors and circles represe
 </p>
 
 
-<div id="org72957b0" class="figure">
+<div id="orgdd2ca1a" class="figure">
 <p><img src="supervisors_and_processes.png" alt="supervisors_and_processes.png" />
 </p>
 </div>
@@ -254,9 +254,9 @@ Supervisors can supervise workers, and supervisors can supervise supervisors.
 </div>
 </div>
 
-<div id="outline-container-org9cb5de2" class="outline-3">
-<h3 id="org9cb5de2">Simple Processes example.</h3>
-<div class="outline-text-3" id="text-org9cb5de2">
+<div id="outline-container-orge94dd2e" class="outline-3">
+<h3 id="orge94dd2e">Simple Processes example.</h3>
+<div class="outline-text-3" id="text-orge94dd2e">
 <p>
 Before understanding the worker/supervisor implementation,  We should create a basic example
 of starting a 'process' and sending messages to it.
@@ -270,9 +270,9 @@ traditional operating sytem thread or processes require.
 </div>
 </div>
 
-<div id="outline-container-org81d9644" class="outline-3">
-<h3 id="org81d9644">Starting a process.</h3>
-<div class="outline-text-3" id="text-org81d9644">
+<div id="outline-container-orgc4998da" class="outline-3">
+<h3 id="orgc4998da">Starting a process.</h3>
+<div class="outline-text-3" id="text-orgc4998da">
 <p>
 A process can be started with "process.start", see the following:
 </p>
@@ -302,9 +302,9 @@ is not a supervisor.
 </div>
 </div>
 
-<div id="outline-container-org30dc1d3" class="outline-3">
-<h3 id="org30dc1d3">Sending messages</h3>
-<div class="outline-text-3" id="text-org30dc1d3">
+<div id="outline-container-org749d878" class="outline-3">
+<h3 id="org749d878">Sending messages</h3>
+<div class="outline-text-3" id="text-org749d878">
 <p>
 Gleam’s process requires type safety for both processes and messages.  When sending messages between
 processes, the first step is to have a 'subject' which references the spawned process.
@@ -380,7 +380,7 @@ starting processes.
 </p>
 
 
-<div id="org55790fe" class="figure">
+<div id="orgcac25c3" class="figure">
 <p><img src="hello-uml.png" alt="hello-uml.png" />
 </p>
 </div>
@@ -547,15 +547,15 @@ This creates output like: (It will be slightly different on your system)
 </p>
 
 
-<pre class="example" id="orgb6f8c33">
+<pre class="example" id="org15e5384">
 TODO: generate example output code here.
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org826ef67" class="outline-3">
-<h3 id="org826ef67">Gleam OTP</h3>
-<div class="outline-text-3" id="text-org826ef67">
+<div id="outline-container-orgc08ba4c" class="outline-3">
+<h3 id="orgc08ba4c">Gleam OTP</h3>
+<div class="outline-text-3" id="text-orgc08ba4c">
 <p>
 Gleam has its own library to simplify building programs using the actor model.  The current status of the gleam library
 "experimental" however its been usable for some time.
@@ -568,9 +568,9 @@ they become feasible or sane at a later date, this document could be updated.
 </div>
 </div>
 
-<div id="outline-container-org2b843cb" class="outline-3">
-<h3 id="org2b843cb">Simple process example as an 'actor'</h3>
-<div class="outline-text-3" id="text-org2b843cb">
+<div id="outline-container-org72d47c2" class="outline-3">
+<h3 id="org72d47c2">Simple process example as an 'actor'</h3>
+<div class="outline-text-3" id="text-org72d47c2">
 <p>
 Gleams actor implementation only runs on the erlang VM.  Actors take advantage of the underlying beam vm concurrency features
 which allows communication via message passing of typed messages.
@@ -660,7 +660,7 @@ function, however this could be added as 'state' during the init function.
 The output should be something like the following:
 </p>
 
-<pre class="example" id="org8033ee2">
+<pre class="example" id="orga951b5c">
 "IN PARENT: message from init function"
 " IN CHILD: loop function triggered"
 " IN CHILD: Message from parent in loop: Hello from parent"
@@ -699,9 +699,9 @@ The process_id can be extracted from the subject, via the 'process.subject_owner
 </div>
 
 
-<div id="outline-container-orgea8bb71" class="outline-4">
-<h4 id="orgea8bb71">Terminating the actor.</h4>
-<div class="outline-text-4" id="text-orgea8bb71">
+<div id="outline-container-orgbc60a6c" class="outline-4">
+<h4 id="orgbc60a6c">Terminating the actor.</h4>
+<div class="outline-text-4" id="text-orgbc60a6c">
 <p>
 We can also explicitly terminate the actor, when we are done with it.  When an actor is unsupervised
 it is considered
@@ -728,9 +728,9 @@ TODO: might show full example and screenshots.
 </div>
 </div>
 
-<div id="outline-container-org4d438c6" class="outline-3">
-<h3 id="org4d438c6">The Worker</h3>
-<div class="outline-text-3" id="text-org4d438c6">
+<div id="outline-container-orgffe438c" class="outline-3">
+<h3 id="orgffe438c">The Worker</h3>
+<div class="outline-text-3" id="text-orgffe438c">
 <p>
 Gleam OTP formalises the "worker and supervisor" pattern.  Workers should always be children of a supervisor,
 but supervisors can supervise other supervisors.
@@ -746,7 +746,7 @@ returns a childspec.
 </pre>
 </div>
 
-<pre class="example" id="orga2dac06">
+<pre class="example" id="orge65708d">
 let actor =
   actor.start_spec(actor.Spec(
     init: fn() {
@@ -787,9 +787,9 @@ This worker is not 'started' it merely exists as a specification to be used by a
 </div>
 
 
-<div id="outline-container-orgee46260" class="outline-3">
-<h3 id="orgee46260">The supervisor</h3>
-<div class="outline-text-3" id="text-orgee46260">
+<div id="outline-container-orgf1f38b5" class="outline-3">
+<h3 id="orgf1f38b5">The supervisor</h3>
+<div class="outline-text-3" id="text-orgf1f38b5">
 <p>
 Loks almost exactly the same as the worker spec, wow.
 </p>
@@ -834,9 +834,9 @@ References: gleam otp source for <a href="https://github.com/gleam-lang/otp/blob
 </div>
 </div>
 
-<div id="outline-container-org70296e6" class="outline-3">
-<h3 id="org70296e6">Round the ring benchmark.</h3>
-<div class="outline-text-3" id="text-org70296e6">
+<div id="outline-container-org384e536" class="outline-3">
+<h3 id="org384e536">Round the ring benchmark.</h3>
+<div class="outline-text-3" id="text-org384e536">
 <p>
 In his book Programming Erlang, Joe Armstrong asks:
 </p>
@@ -847,17 +847,195 @@ round the ring M times so that a total of N * M messages get sent.
 Time how long this takes for different values of N and M.
 </p>
 
+<p>
+In this example the worker/supervisor requirements are not required.  It
+can be acheived with a ring of actors.  In this ring, each actor needs
+to contain the subject of the next actor that it will need ot message.
+</p>
+
+<p>
+Below is an example of this ring benchmark, using the glint library 0.12 testing
+library.
+</p>
+
+<p>
+I should talk here about how it works..
+</p>
+
+
 <div class="org-src-container">
-<pre class="src src-gleam"><span style="color: #D05010; font-style: italic;">// TODO: write a simple example.</span>
+<pre class="src src-sh">$ gleam run -- --process-count=100 --loop=200000
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-gleam"><span style="color: #FF5A00;">import</span> gleam/io
+
+<span style="color: #FF5A00;">import</span> gleam/otp/actor
+<span style="color: #FF5A00;">import</span> gleam/iterator<span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF4F00; background-color: #190700;">{</span><span style="color: #F07010;">fold</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #F07010;">from_list</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #F07010;">take</span><span style="color: #FF4F00; background-color: #190700;">}</span>
+<span style="color: #FF5A00;">import</span> gleam/erlang<span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF4F00; background-color: #190700;">{</span><span style="color: #F07010;">start_arguments</span><span style="color: #FF4F00; background-color: #190700;">}</span>
+<span style="color: #FF5A00;">import</span> gleam/erlang/process<span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF4F00; background-color: #190700;">{</span><span style="color: #FF7A00;">Subject</span><span style="color: #FF4F00; background-color: #190700;">}</span>
+<span style="color: #FF5A00;">import</span> glint<span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF4F00; background-color: #190700;">{</span><span style="color: #FF7A00;">CommandInput</span><span style="color: #FF4F00; background-color: #190700;">}</span>
+<span style="color: #FF5A00;">import</span> glint/flag
+
+<span style="color: #D05010; font-style: italic;">// Write a ring benchmark. Create N processes in a ring. Send a message round the ring M</span>
+<span style="color: #D05010; font-style: italic;">// times so that a total of N * M messages get sent. Time how long this takes for different</span>
+<span style="color: #D05010; font-style: italic;">// values of N and M.</span>
+
+<span style="color: #D05010; font-style: italic;">// the key for the loop flag </span><span style="color: #FF4F00; font-style: italic;">(</span><span style="color: #D05010; font-style: italic;">M</span><span style="color: #FF4F00; font-style: italic;">)</span>
+<span style="color: #FF5A00;">const</span> <span style="color: #FF3A00;">loop</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF6A00;">"loop"</span>
+
+<span style="color: #D05010; font-style: italic;">// the key for the process-count flag </span><span style="color: #FF4F00; font-style: italic;">(</span><span style="color: #D05010; font-style: italic;">N</span><span style="color: #FF4F00; font-style: italic;">)</span>
+<span style="color: #FF5A00;">const</span> <span style="color: #FF3A00;">process_count</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF6A00;">"process-count"</span>
+
+<span style="color: #D05010; font-style: italic;">// terminate the vm,  i can't find a better way.</span>
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">external</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">terminate</span><span style="color: #FF4F00; background-color: #190700;">()</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF7A00;">Nil</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
+  <span style="color: #FF6A00;">"erlang"</span> <span style="color: #FF6A00;">"halt"</span>
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">type</span> <span style="color: #FF7A00;">Message</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+  <span style="color: #FF7A00;">Target</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF7A00;">Subject</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF7A00;">Message</span><span style="color: #D04000; background-color: #190700;">)</span><span style="color: #E14400; background-color: #190700;">)</span>
+  <span style="color: #FF7A00;">MsgNext</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF7A00;">Int</span><span style="color: #E14400; background-color: #190700;">)</span>
+  <span style="color: #FF7A00;">NoTarget</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">type</span> <span style="color: #FF7A00;">SystemState</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+  <span style="color: #FF7A00;">NextInChain</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF7A00;">Subject</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF7A00;">Message</span><span style="color: #D04000; background-color: #190700;">)</span><span style="color: #E14400; background-color: #190700;">)</span>
+  <span style="color: #FF7A00;">None</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">handle_msg_next</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">state</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">count</span><span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+  <span style="color: #FF5A00;">case</span> <span style="color: #FF4A00;">state</span> <span style="color: #E14400; background-color: #190700;">{</span>
+    <span style="color: #FF7A00;">NextInChain</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">target</span><span style="color: #D04000; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #D04000; background-color: #190700;">{</span>
+      <span style="color: #FF5A00;">case</span> <span style="color: #FF4A00;">count</span> <span style="color: #AA3A00; background-color: #190700;">{</span>
+        <span style="color: #FF3A00;">0</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+          <span style="color: #F07010;">terminate</span><span style="color: #E14400; background-color: #190700;">()</span>
+          <span style="color: #FF4A00;">actor</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF7A00;">Continue</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">state</span><span style="color: #E14400; background-color: #190700;">)</span>
+        <span style="color: #FF4F00; background-color: #190700;">}</span>
+        _anything_else <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+          <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">send</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">target</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF7A00;">MsgNext</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">count</span> <span style="color: #FF5A00; background-color: #190700;">-</span> <span style="color: #FF3A00;">1</span><span style="color: #D04000; background-color: #190700;">)</span><span style="color: #E14400; background-color: #190700;">)</span>
+          <span style="color: #FF4A00;">actor</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF7A00;">Continue</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">state</span><span style="color: #E14400; background-color: #190700;">)</span>
+        <span style="color: #FF4F00; background-color: #190700;">}</span>
+      <span style="color: #AA3A00; background-color: #190700;">}</span>
+    <span style="color: #D04000; background-color: #190700;">}</span>
+    <span style="color: #FF7A00;">None</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #D04000; background-color: #190700;">{</span>
+      <span style="color: #FF4A00;">actor</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF7A00;">Continue</span><span style="color: #AA3A00; background-color: #190700;">(</span><span style="color: #FF4A00;">state</span><span style="color: #AA3A00; background-color: #190700;">)</span>
+    <span style="color: #D04000; background-color: #190700;">}</span>
+  <span style="color: #E14400; background-color: #190700;">}</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">make_actor</span><span style="color: #FF4F00; background-color: #190700;">()</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">actor_spec</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
+    <span style="color: #FF4A00;">actor</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF7A00;">Spec</span><span style="color: #E14400; background-color: #190700;">(</span>
+      <span style="color: #FF3A00; font-style: italic;">init</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF5A00;">fn</span><span style="color: #D04000; background-color: #190700;">()</span> <span style="color: #D04000; background-color: #190700;">{</span> <span style="color: #FF4A00;">actor</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF7A00;">Ready</span><span style="color: #AA3A00; background-color: #190700;">(</span><span style="color: #FF7A00;">None</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">new_selector</span><span style="color: #FF4F00; background-color: #190700;">()</span><span style="color: #AA3A00; background-color: #190700;">)</span> <span style="color: #D04000; background-color: #190700;">}</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
+      <span style="color: #FF3A00; font-style: italic;">init_timeout</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF3A00;">1000</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
+      <span style="color: #FF3A00; font-style: italic;">loop</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF5A00;">fn</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">msg</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF7A00;">Message</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">state</span><span style="color: #D04000; background-color: #190700;">)</span> <span style="color: #D04000; background-color: #190700;">{</span>
+        <span style="color: #FF5A00;">case</span> <span style="color: #FF4A00;">msg</span> <span style="color: #AA3A00; background-color: #190700;">{</span>
+          <span style="color: #FF7A00;">Target</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">t</span><span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+            <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">newstate</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF7A00;">NextInChain</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">t</span><span style="color: #E14400; background-color: #190700;">)</span>
+            <span style="color: #FF4A00;">actor</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF7A00;">Continue</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">newstate</span><span style="color: #E14400; background-color: #190700;">)</span>
+          <span style="color: #FF4F00; background-color: #190700;">}</span>
+          <span style="color: #FF7A00;">MsgNext</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">count</span><span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+            <span style="color: #F07010;">handle_msg_next</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">state</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">count</span><span style="color: #E14400; background-color: #190700;">)</span>
+          <span style="color: #FF4F00; background-color: #190700;">}</span>
+          <span style="color: #FF7A00;">NoTarget</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+            <span style="color: #FF4A00;">actor</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF7A00;">Continue</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">state</span><span style="color: #E14400; background-color: #190700;">)</span>
+          <span style="color: #FF4F00; background-color: #190700;">}</span>
+        <span style="color: #AA3A00; background-color: #190700;">}</span>
+      <span style="color: #D04000; background-color: #190700;">}</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
+    <span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF7A00;">Ok</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">actor</span><span style="color: #E14400; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF4A00;">actor</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">start_spec</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">actor_spec</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #FF4A00;">actor</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">main</span><span style="color: #FF4F00; background-color: #190700;">()</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">loop_flag</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
+    <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF7A00;">I</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">default</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00;">10</span><span style="color: #E14400; background-color: #190700;">)</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">new</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">description</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF6A00;">"Loop the ring n times."</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">process_count_flag</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
+    <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF7A00;">I</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">default</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00;">1000</span><span style="color: #E14400; background-color: #190700;">)</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">new</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">description</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF6A00;">"Create N processes in a ring"</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">new</span><span style="color: #E14400; background-color: #190700;">()</span>
+  <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">add</span><span style="color: #E14400; background-color: #190700;">(</span>
+    <span style="color: #FF3A00; font-style: italic;">at</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #D04000; background-color: #190700;">[]</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
+    <span style="color: #FF3A00; font-style: italic;">do</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">command</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">build_args</span><span style="color: #D04000; background-color: #190700;">)</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">flag</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">loop</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">loop_flag</span><span style="color: #D04000; background-color: #190700;">)</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">flag</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">process_count</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">process_count_flag</span><span style="color: #D04000; background-color: #190700;">)</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">description</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF6A00;">"Runs Joe Armstrongs ring benchmark"</span><span style="color: #D04000; background-color: #190700;">)</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
+  <span style="color: #E14400; background-color: #190700;">)</span>
+  <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">run_and_handle</span><span style="color: #E14400; background-color: #190700;">(</span>
+    <span style="color: #F07010;">start_arguments</span><span style="color: #D04000; background-color: #190700;">()</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
+    <span style="color: #FF5A00;">fn</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">res</span><span style="color: #D04000; background-color: #190700;">)</span> <span style="color: #D04000; background-color: #190700;">{</span>
+      <span style="color: #FF5A00;">case</span> <span style="color: #FF4A00;">res</span> <span style="color: #AA3A00; background-color: #190700;">{</span>
+        <span style="color: #FF7A00;">Ok</span><span style="color: #FF4F00; background-color: #190700;">(</span>_out<span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+          <span style="color: #FF4A00;">io</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">debug</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF6A00;">"looks good - OKAY"</span><span style="color: #E14400; background-color: #190700;">)</span> <span style="color: #D05010; font-style: italic;">// probably should fix this.</span>
+        <span style="color: #FF4F00; background-color: #190700;">}</span>
+        <span style="color: #FF7A00;">Error</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">err</span><span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+          <span style="color: #FF4A00;">err</span>
+        <span style="color: #FF4F00; background-color: #190700;">}</span>
+      <span style="color: #AA3A00; background-color: #190700;">}</span>
+      <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">io</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">println</span>
+    <span style="color: #D04000; background-color: #190700;">}</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
+  <span style="color: #E14400; background-color: #190700;">)</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
+
+<span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">build_args</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">input</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF7A00;">CommandInput</span><span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF7A00;">Ok</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">loop</span><span style="color: #E14400; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">get_int</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00; font-style: italic;">from</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">input</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">flags</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF3A00; font-style: italic;">for</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">loop</span><span style="color: #E14400; background-color: #190700;">)</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF7A00;">Ok</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">process_count</span><span style="color: #E14400; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
+    <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">get_int</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00; font-style: italic;">from</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">input</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">flags</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF3A00; font-style: italic;">for</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">process_count</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #D05010; font-style: italic;">// make 10 actors</span>
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">actor_list</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
+    <span style="color: #FF4A00;">iterator</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">repeatedly</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF5A00;">fn</span><span style="color: #D04000; background-color: #190700;">()</span> <span style="color: #D04000; background-color: #190700;">{</span> <span style="color: #F07010;">make_actor</span><span style="color: #AA3A00; background-color: #190700;">()</span> <span style="color: #D04000; background-color: #190700;">}</span><span style="color: #E14400; background-color: #190700;">)</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #F07010;">take</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">process_count</span><span style="color: #E14400; background-color: #190700;">)</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">iterator</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">to_list</span><span style="color: #E14400; background-color: #190700;">()</span>
+
+  <span style="color: #FF4A00;">actor_list</span>
+  <span style="color: #FF5A00;">|&gt;</span> <span style="color: #F07010;">from_list</span>
+  <span style="color: #FF5A00;">|&gt;</span> <span style="color: #F07010;">fold</span><span style="color: #E14400; background-color: #190700;">(</span>
+    <span style="color: #FF3A00; font-style: italic;">from</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF7A00;">NoTarget</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
+    <span style="color: #FF3A00; font-style: italic;">with</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF5A00;">fn</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">prev</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">element</span><span style="color: #D04000; background-color: #190700;">)</span> <span style="color: #D04000; background-color: #190700;">{</span>
+      <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">send</span><span style="color: #AA3A00; background-color: #190700;">(</span><span style="color: #FF4A00;">element</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">prev</span><span style="color: #AA3A00; background-color: #190700;">)</span>
+      <span style="color: #FF7A00;">Target</span><span style="color: #AA3A00; background-color: #190700;">(</span><span style="color: #FF4A00;">element</span><span style="color: #AA3A00; background-color: #190700;">)</span>
+    <span style="color: #D04000; background-color: #190700;">}</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
+  <span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF7A00;">Ok</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">last_actor</span><span style="color: #E14400; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
+    <span style="color: #FF4A00;">actor_list</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #F07010;">from_list</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">iterator</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">last</span><span style="color: #E14400; background-color: #190700;">()</span>
+
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF7A00;">Ok</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">first_actor</span><span style="color: #E14400; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
+    <span style="color: #FF4A00;">actor_list</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #F07010;">from_list</span>
+    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">iterator</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">first</span><span style="color: #E14400; background-color: #190700;">()</span>
+
+  <span style="color: #D05010; font-style: italic;">// set the last actor to message the first.</span>
+  <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">send</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">first_actor</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF7A00;">Target</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">last_actor</span><span style="color: #D04000; background-color: #190700;">)</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #D05010; font-style: italic;">// fire off the message to the ring.</span>
+  <span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">send</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">last_actor</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF7A00;">MsgNext</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">process_count</span> <span style="color: #FF5A00;">*</span> <span style="color: #FF4A00;">loop</span><span style="color: #D04000; background-color: #190700;">)</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> _discard <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF7A00;">Ok</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">sleep_forever</span><span style="color: #D04000; background-color: #190700;">()</span><span style="color: #E14400; background-color: #190700;">)</span>
+
+  <span style="color: #FF7A00;">Ok</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF6A00;">"Ring Complete"</span><span style="color: #E14400; background-color: #190700;">)</span>
+<span style="color: #FF4F00; background-color: #190700;">}</span>
 </pre>
 </div>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org302e7bc" class="outline-2">
-<h2 id="org302e7bc">Distribution</h2>
-<div class="outline-text-2" id="text-org302e7bc">
+<div id="outline-container-org2d5846d" class="outline-2">
+<h2 id="org2d5846d">Distribution</h2>
+<div class="outline-text-2" id="text-org2d5846d">
 <p>
 Explain what distribution means in erlang, and what it means to gleam.
 </p>
@@ -871,36 +1049,36 @@ Explain cookies and using tls instead of plain
 </p>
 </div>
 
-<div id="outline-container-org3f9cc9f" class="outline-3">
-<h3 id="org3f9cc9f">Starting up nodes.</h3>
-<div class="outline-text-3" id="text-org3f9cc9f">
+<div id="outline-container-org120bb9f" class="outline-3">
+<h3 id="org120bb9f">Starting up nodes.</h3>
+<div class="outline-text-3" id="text-org120bb9f">
 <p>
 Starting up nodes, firewall rules, mention the ports.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgfc8deb0" class="outline-3">
-<h3 id="orgfc8deb0">Spawning a process on another node.</h3>
-<div class="outline-text-3" id="text-orgfc8deb0">
+<div id="outline-container-org4f5737b" class="outline-3">
+<h3 id="org4f5737b">Spawning a process on another node.</h3>
+<div class="outline-text-3" id="text-org4f5737b">
 <p>
 Demonstrate starting a process on another node.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org9a0c6db" class="outline-3">
-<h3 id="org9a0c6db">Finding processes on another node</h3>
-<div class="outline-text-3" id="text-org9a0c6db">
+<div id="outline-container-org28f0005" class="outline-3">
+<h3 id="org28f0005">Finding processes on another node</h3>
+<div class="outline-text-3" id="text-org28f0005">
 <p>
 Demonstrate finding a process on another node.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgf884293" class="outline-3">
-<h3 id="orgf884293">Gleam process registry ?</h3>
-<div class="outline-text-3" id="text-orgf884293">
+<div id="outline-container-org40b4339" class="outline-3">
+<h3 id="org40b4339">Gleam process registry ?</h3>
+<div class="outline-text-3" id="text-org40b4339">
 <p>
 This doesn't exist, should it? how do i find processes on another node.
 </p>
@@ -908,9 +1086,9 @@ This doesn't exist, should it? how do i find processes on another node.
 </div>
 </div>
 
-<div id="outline-container-org4c5a37f" class="outline-2">
-<h2 id="org4c5a37f">Resources:</h2>
-<div class="outline-text-2" id="text-org4c5a37f">
+<div id="outline-container-orgd35dc68" class="outline-2">
+<h2 id="orgd35dc68">Resources:</h2>
+<div class="outline-text-2" id="text-orgd35dc68">
 <ul class="org-ul">
 <li>Erlang design principals: <a href="https://www.erlang.org/doc/design_principles/users_guide.html">https://www.erlang.org/doc/design_principles/users_guide.html</a></li>
 <li>McNimbles OTP demo: <a href="https://code-change.nl/gleam-blog/20230225-gleam-otp.html">https://code-change.nl/gleam-blog/20230225-gleam-otp.html</a></li>
@@ -919,9 +1097,9 @@ This doesn't exist, should it? how do i find processes on another node.
 </div>
 </div>
 
-<div id="outline-container-org21ff4dd" class="outline-2">
-<h2 id="org21ff4dd">Acknowledgements:</h2>
-<div class="outline-text-2" id="text-org21ff4dd">
+<div id="outline-container-org825dbe5" class="outline-2">
+<h2 id="org825dbe5">Acknowledgements:</h2>
+<div class="outline-text-2" id="text-org825dbe5">
 <p>
 Thanks to :
 </p>

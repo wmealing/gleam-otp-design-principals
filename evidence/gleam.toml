@@ -13,6 +13,7 @@ description = "A Gleam project"
 gleam_stdlib = "~> 0.28"
 gleam_erlang = "~> 0.18"
 gleam_otp = "~> 0.5"
+glint = "0.12.0-rc3"
 
 [dev-dependencies]
 gleeunit = "~> 0.10"
