@@ -422,22 +422,11 @@ BREAK: (a)bort (A)bort with dump (c)ontinue (p)roc info (i)nfo
 a
 #+end_example
 
-We can modify the example to use erlangs built in [[https://www.erlang.org/doc/apps/observer/observer_ug.html][observer]] utility to observe the process
+We can modify the example above to use erlangs built in [[https://www.erlang.org/doc/apps/observer/observer_ug.html][observer]] utility to observe the process
 being created and destroyed.
 
-The observer utility is erlang code and can be started from gleam using the foreign function interface
-and defining an external function.
-
-#+begin_src gleam 
-pub external fn observer_start() -> Nil =
-  "observer" "start"
-#+end_src
-
-This external 'observer:start()' can be started with observer_start() in gleam.  This should be early
-in the main() function.
-
-The process_id can be extracted from the subject, via the 'process.subject_owner' function.
-
+The erlang observer utility can be started as a foreign function and run in the gleam main thread
+while the program is running to inspect system state.
 
 *** Terminating the actor.
 
