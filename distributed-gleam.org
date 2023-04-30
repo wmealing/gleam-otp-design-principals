@@ -191,7 +191,6 @@ Remember not name a module the same name as other erlang modules or unexpected b
   import gleam/function
   import gleam/iterator.{iterate, take, to_list}
 
-
   pub type ChannelResponse {
     Allocated(id: Int)
     None
@@ -339,7 +338,7 @@ Erlangs tools such as the [[https://www.erlang.org/doc/apps/observer/observer_ug
 
 Below we show an example of a basic process being started.  It uses the similar mechanisms
 of using subjects for communiction but uses the actor.Spec type to reduce the complexity to 'init' and 'loop'
-functions.  
+functions.
 
 - The 'init' function sets up the state.
 - The 'loop' function handles messages being sent to the 'actor' process.
@@ -348,6 +347,17 @@ Once an actor.Spec has been created it can be started with the actor.start_spec 
 
 In this simple example, you might notice that the actor can not message the parent process in the 'loop'
 function, however this could be added as 'state' during the init function.
+
+The main process needs to 'sleep' while while waiting for the other processes to run.  Or the entire
+process will be terminated early.
+
+Use the following function, to sleep until the erlang vm is explicitly halted.
+
+#+begin_src gleam
+    Ok(process.sleep_forever())
+#+end_src
+
+Now for the meat.
 
 #+begin_src gleam
   import gleam/io
@@ -432,28 +442,24 @@ The process_id can be extracted from the subject, via the 'process.subject_owner
 *** Terminating the actor.
 
 We can also explicitly terminate the actor, when we are done with it.  When an actor is unsupervised
-it is considered
+it is considered to be standalone and only 'kill' would work.
 
 #+begin_src gleam
   let actor_pid = process.subject_owner(actor_subject)
 
   // must 'kill' the actor.
   process.kill(actor_pid)
-
 #+end_src
 
 The "kill" function sends a message.  If we modify the example we can see that after the kill signal has been
 sent to the process, observer will show one less process in the list.
-
-TODO: might show full example and screenshots.
 
 ** The Worker
 
 Gleam OTP formalises the "worker and supervisor" pattern.  Workers should always be children of a supervisor,
 but supervisors can supervise other supervisors.
 
-The worker function requirement takes a function which returns a result or an error, and
-returns a childspec.
+The worker function requirement takes a function which returns a result or an error, and returns a childspec.
 
 #+begin_src gleam
   pub fn worker(start: fn(a) -> Result(Subject(b), StartError)) -> ChildSpec( b,  a,  a )
@@ -488,11 +494,9 @@ in the instance function.
 
 This worker is not 'started' it merely exists as a specification to be used by a supervisor.
 
-
 ** The supervisor
 
-
-Loks almost exactly the same as the worker spec, wow.
+Looks almost exactly the same as the worker spec, wow.
 
 Prepare a new supervisor type child.
 
@@ -527,21 +531,24 @@ References: gleam otp source for [[https://github.com/gleam-lang/otp/blob/main/s
 
 In his book Programming Erlang, Joe Armstrong asks:
 
-Write a ring benchmark. Create N processes in a ring. Send a message
-round the ring M times so that a total of N * M messages get sent.
+Write a ring benchmark. Create N processes in a ring. Send a message round the ring M times so that a total of N * M messages get sent.
 Time how long this takes for different values of N and M.
 
-In this example the worker/supervisor requirements are not required.  It
-can be acheived with a ring of actors.  In this ring, each actor needs
+In this example the worker/supervisor requirements are not required.  It can be acheived with a ring of actors.  In this ring, each actor needs
 to contain the subject of the next actor that it will need ot message.
 
-Below is an example of this ring benchmark, using the glint library 0.12 testing
-library.
+Below is an example of this ring benchmark, using the glint library 0.12-rc3 library for parsing command line options.
 
-I should talk here about how it works..
+Much like the previous example, when the main thread terminates, all the children processes will be terminated.
 
+We had to add an external function to terminate the runtime.
 
-#+begin_src sh
+#+begin_src gleam
+pub external fn terminate() -> Nil =
+    "erlang" "halt"
+#+end_src
+
+#+begin_src shell
 $ gleam run -- --process-count=100 --loop=200000
 #+end_src
 
@@ -652,7 +659,8 @@ $ gleam run -- --process-count=100 --loop=200000
       fn(res) {
         case res {
           Ok(_out) -> {
-            io.debug("looks good - OKAY") // probably should fix this.
+            // probably should have better error handling here.
+            io.debug("looks good - OKAY")
           }
           Error(err) -> {
             err
