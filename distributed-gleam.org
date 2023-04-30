@@ -397,8 +397,8 @@ Now for the meat.
 
     let actor_pid = process.subject_owner(actor_subject)
 
-    // send exit, is this out of band, not a standard message.
-    process.send_exit(actor_pid)
+    // terminate the actor, kill is required as not supervised.
+    process.kill(actor_pid)
 
     io.println("Press Ctrl-c a enter to exit.")
 
