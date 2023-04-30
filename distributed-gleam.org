@@ -313,7 +313,6 @@ Remember not name a module the same name as other erlang modules or unexpected b
 
 This creates output like: (It will be slightly different on your system)
 
-
 #+begin_example
 TODO: generate example output code here.
 #+end_example
@@ -432,7 +431,7 @@ while the program is running to inspect system state.
 *** Terminating the actor.
 
 We can also explicitly terminate the actor, when we are done with it.  When an actor is unsupervised
-it is considered to be standalone and only 'kill' would work.
+it is considered to be standalone and 'kill' would be the only call that would terminate the process.
 
 #+begin_src gleam
   let actor_pid = process.subject_owner(actor_subject)
@@ -484,15 +483,23 @@ in the instance function.
 
 This worker is not 'started' it merely exists as a specification to be used by a supervisor.
 
+TODO: Integrate McNimbles suggestion about 'returning and the 3rd arg of ChildSpec', research and fill it in.
+
 ** The supervisor
 
-Looks almost exactly the same as the worker spec, wow.
+The supervisor is responsible for starting, stopping, and monitoring its child processes.
+The basic idea of a supervisor is that it must keep its child processes alive by restarting them when necessary.
 
-Prepare a new supervisor type child.
+Gleam supervisors do not support the [[https://www.erlang.org/doc/design_principles/sup_princ.html#supervisor-flags][strategies]] of the erlang, It defaults to 'one_for_one' as no strategy is
+provided to the underlying erlang supervisor.
+
+The children of a supervisor are defined as a list of worker specifications.
 
 #+begin_src gleam
 pub fn supervisor(start: fn(a) -> Result(Subject(b), StartError)) -> ChildSpec( b,  a,  a )
 #+end_src
+
+And children can be added:
 
 #+begin_src gleam
 pub fn add(children: Children(a), child_spec: ChildSpec(b, a, c)) -> Children(c)
@@ -514,6 +521,13 @@ Add a child to the collection of children of the supervisor
    ))
 
 #+end_src
+
+If more than max_frequency number of restarts occur in the last frequency_period seconds, the supervisor terminates
+all the child processes and then itself.
+
+TODO: ensure i have the units right, not sure why gleam deviated from erlangs terms.
+
+TODO: perhaps talk about tuning the intensitiy and period from [[https://www.erlang.org/doc/design_principles/sup_princ.html#tuning-the-intensity-and-period][here.]]
 
 References: gleam otp source for [[https://github.com/gleam-lang/otp/blob/main/src/gleam/otp/supervisor.gleam][supervisors]].
 
@@ -537,6 +551,10 @@ We had to add an external function to terminate the runtime.
 pub external fn terminate() -> Nil =
     "erlang" "halt"
 #+end_src
+
+Without explicit termination, we can't tell how long a runs as the user would need to interact with the process.
+
+We run the benchmark with the process count of 100, with 200,000 iterations of the loop at the shell with the command:
 
 #+begin_src shell
 $ gleam run -- --process-count=100 --loop=200000
@@ -710,22 +728,27 @@ A distributed Erlang system consists of a number of Erlang runtime systems commu
 Each such runtime system is called a node. Message passing between processes at different nodes, as well as
 links and monitors are transparent when pids are used.
 
+By default gleam is NOT started in a distributed node and is configured not to be able to interact with other
+BEAM nodes.
+
 #+begin_comment WARNING
 Starting a distributed node without also specifying -proto_dist inet_tls will expose the node
 to attacks that may give the attacker complete access to the node and in extension the cluster.
 #+end_comment
-
 
 When using un-secure distributed nodes, make sure that the network is configured to keep potential
 attackers out. See the Using SSL for Erlang Distribution User's Guide for details on how to setup
 a secure distributed node.
 
 
-Explain what it means to "start" the distribution.
-
-Explain cookies and using tls instead of plain
-
 ** Starting up nodes.
+
+- mention that shortname or longname, not both.
+  
+- epmd should be started.
+
+- panging a node.
+
 
 Starting up nodes, firewall rules, mention the ports.
 
