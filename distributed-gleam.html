@@ -3,195 +3,11 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-04-30 Sun 22:37 -->
+<!-- 2023-04-30 Sun 22:47 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Gleam OTP Design Principles User's Guide</title>
 <meta name="generator" content="Org Mode" />
-<style>
-  #content { max-width: 60em; margin: auto; }
-  .title  { text-align: center;
-             margin-bottom: .2em; }
-  .subtitle { text-align: center;
-              font-size: medium;
-              font-weight: bold;
-              margin-top:0; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { font-family: monospace; color: green; }
-  .priority { font-family: monospace; color: orange; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #e6e6e6;
-    border-radius: 3px;
-    background-color: #f2f2f2;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: auto;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    top: -8px;
-    right: 12px;
-    padding: 3px;
-    color: #555;
-    background-color: #f2f2f299;
-  }
-  pre.src:hover:before { display: inline; margin-top: 14px;}
-  /* Languages per Org manual */
-  pre.src-asymptote:before { content: 'Asymptote'; }
-  pre.src-awk:before { content: 'Awk'; }
-  pre.src-authinfo::before { content: 'Authinfo'; }
-  pre.src-C:before { content: 'C'; }
-  /* pre.src-C++ doesn't work in CSS */
-  pre.src-clojure:before { content: 'Clojure'; }
-  pre.src-css:before { content: 'CSS'; }
-  pre.src-D:before { content: 'D'; }
-  pre.src-ditaa:before { content: 'ditaa'; }
-  pre.src-dot:before { content: 'Graphviz'; }
-  pre.src-calc:before { content: 'Emacs Calc'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-fortran:before { content: 'Fortran'; }
-  pre.src-gnuplot:before { content: 'gnuplot'; }
-  pre.src-haskell:before { content: 'Haskell'; }
-  pre.src-hledger:before { content: 'hledger'; }
-  pre.src-java:before { content: 'Java'; }
-  pre.src-js:before { content: 'Javascript'; }
-  pre.src-latex:before { content: 'LaTeX'; }
-  pre.src-ledger:before { content: 'Ledger'; }
-  pre.src-lisp:before { content: 'Lisp'; }
-  pre.src-lilypond:before { content: 'Lilypond'; }
-  pre.src-lua:before { content: 'Lua'; }
-  pre.src-matlab:before { content: 'MATLAB'; }
-  pre.src-mscgen:before { content: 'Mscgen'; }
-  pre.src-ocaml:before { content: 'Objective Caml'; }
-  pre.src-octave:before { content: 'Octave'; }
-  pre.src-org:before { content: 'Org mode'; }
-  pre.src-oz:before { content: 'OZ'; }
-  pre.src-plantuml:before { content: 'Plantuml'; }
-  pre.src-processing:before { content: 'Processing.js'; }
-  pre.src-python:before { content: 'Python'; }
-  pre.src-R:before { content: 'R'; }
-  pre.src-ruby:before { content: 'Ruby'; }
-  pre.src-sass:before { content: 'Sass'; }
-  pre.src-scheme:before { content: 'Scheme'; }
-  pre.src-screen:before { content: 'Gnu Screen'; }
-  pre.src-sed:before { content: 'Sed'; }
-  pre.src-sh:before { content: 'shell'; }
-  pre.src-sql:before { content: 'SQL'; }
-  pre.src-sqlite:before { content: 'SQLite'; }
-  /* additional languages in org.el's org-babel-load-languages alist */
-  pre.src-forth:before { content: 'Forth'; }
-  pre.src-io:before { content: 'IO'; }
-  pre.src-J:before { content: 'J'; }
-  pre.src-makefile:before { content: 'Makefile'; }
-  pre.src-maxima:before { content: 'Maxima'; }
-  pre.src-perl:before { content: 'Perl'; }
-  pre.src-picolisp:before { content: 'Pico Lisp'; }
-  pre.src-scala:before { content: 'Scala'; }
-  pre.src-shell:before { content: 'Shell Script'; }
-  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
-  /* additional language identifiers per "defun org-babel-execute"
-       in ob-*.el */
-  pre.src-cpp:before  { content: 'C++'; }
-  pre.src-abc:before  { content: 'ABC'; }
-  pre.src-coq:before  { content: 'Coq'; }
-  pre.src-groovy:before  { content: 'Groovy'; }
-  /* additional language identifiers from org-babel-shell-names in
-     ob-shell.el: ob-shell is the only babel language using a lambda to put
-     the execution function name together. */
-  pre.src-bash:before  { content: 'bash'; }
-  pre.src-csh:before  { content: 'csh'; }
-  pre.src-ash:before  { content: 'ash'; }
-  pre.src-dash:before  { content: 'dash'; }
-  pre.src-ksh:before  { content: 'ksh'; }
-  pre.src-mksh:before  { content: 'mksh'; }
-  pre.src-posh:before  { content: 'posh'; }
-  /* Additional Emacs modes also supported by the LaTeX listings package */
-  pre.src-ada:before { content: 'Ada'; }
-  pre.src-asm:before { content: 'Assembler'; }
-  pre.src-caml:before { content: 'Caml'; }
-  pre.src-delphi:before { content: 'Delphi'; }
-  pre.src-html:before { content: 'HTML'; }
-  pre.src-idl:before { content: 'IDL'; }
-  pre.src-mercury:before { content: 'Mercury'; }
-  pre.src-metapost:before { content: 'MetaPost'; }
-  pre.src-modula-2:before { content: 'Modula-2'; }
-  pre.src-pascal:before { content: 'Pascal'; }
-  pre.src-ps:before { content: 'PostScript'; }
-  pre.src-prolog:before { content: 'Prolog'; }
-  pre.src-simula:before { content: 'Simula'; }
-  pre.src-tcl:before { content: 'tcl'; }
-  pre.src-tex:before { content: 'TeX'; }
-  pre.src-plain-tex:before { content: 'Plain TeX'; }
-  pre.src-verilog:before { content: 'Verilog'; }
-  pre.src-vhdl:before { content: 'VHDL'; }
-  pre.src-xml:before { content: 'XML'; }
-  pre.src-nxml:before { content: 'XML'; }
-  /* add a generic configuration mode; LaTeX export needs an additional
-     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
-  pre.src-conf:before { content: 'Configuration File'; }
-
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.org-right  { text-align: center;  }
-  th.org-left   { text-align: center;   }
-  th.org-center { text-align: center; }
-  td.org-right  { text-align: right;  }
-  td.org-left   { text-align: left;   }
-  td.org-center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara { display: inline; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .equation-container {
-    display: table;
-    text-align: center;
-    width: 100%;
-  }
-  .equation {
-    vertical-align: middle;
-  }
-  .equation-label {
-    display: table-cell;
-    text-align: right;
-    vertical-align: middle;
-  }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { }
-</style>
 <link rel="stylesheet" href="tufte.css" type="text/css" />
 <meta http-equiv="Content-Security-Policy"  content="default-src 'self'; img-src https://*; child-src 'none';">
 </head>
@@ -202,17 +18,17 @@
 This document is a work in progress and will be updated as time permits.
 </p>
 
-<div id="outline-container-org1f8fa73" class="outline-2">
-<h2 id="org1f8fa73">Overview</h2>
-<div class="outline-text-2" id="text-org1f8fa73">
+<div id="outline-container-org5891d74" class="outline-2">
+<h2 id="org5891d74">Overview</h2>
+<div class="outline-text-2" id="text-org5891d74">
 <p>
 The OTP design principles define how to structure Gleam code in terms of processes and modules.
 </p>
 </div>
 
-<div id="outline-container-org290469d" class="outline-3">
-<h3 id="org290469d">Supervisor Tree</h3>
-<div class="outline-text-3" id="text-org290469d">
+<div id="outline-container-org3eb5da4" class="outline-3">
+<h3 id="org3eb5da4">Supervisor Tree</h3>
+<div class="outline-text-3" id="text-org3eb5da4">
 <p>
 A fundamental idea of most BEAM based language is the ability to supervise a process, and be notified of its failure.
 This supervisory idea has roots in the erlang history and has become a well accepted method to deal with process failure.
@@ -242,7 +58,7 @@ In the following figure, square boxes represents supervisors and circles represe
 </p>
 
 
-<div id="org4dbcb35" class="figure">
+<div id="orgbc93e76" class="figure">
 <p><img src="supervisors_and_processes.png" alt="supervisors_and_processes.png" />
 </p>
 </div>
@@ -254,9 +70,9 @@ Supervisors can supervise workers, and supervisors can supervise supervisors.
 </div>
 </div>
 
-<div id="outline-container-orga17693f" class="outline-3">
-<h3 id="orga17693f">Simple Processes example.</h3>
-<div class="outline-text-3" id="text-orga17693f">
+<div id="outline-container-org55fab6d" class="outline-3">
+<h3 id="org55fab6d">Simple Processes example.</h3>
+<div class="outline-text-3" id="text-org55fab6d">
 <p>
 Before understanding the worker/supervisor implementation,  We should create a basic example
 of starting a 'process' and sending messages to it.
@@ -270,9 +86,9 @@ traditional operating sytem thread or processes require.
 </div>
 </div>
 
-<div id="outline-container-org92d3757" class="outline-3">
-<h3 id="org92d3757">Starting a process.</h3>
-<div class="outline-text-3" id="text-org92d3757">
+<div id="outline-container-org55dcc1a" class="outline-3">
+<h3 id="org55dcc1a">Starting a process.</h3>
+<div class="outline-text-3" id="text-org55dcc1a">
 <p>
 A process can be started with "process.start", see the following:
 </p>
@@ -302,9 +118,9 @@ is not a supervisor.
 </div>
 </div>
 
-<div id="outline-container-org187df7b" class="outline-3">
-<h3 id="org187df7b">Sending messages</h3>
-<div class="outline-text-3" id="text-org187df7b">
+<div id="outline-container-org09d817a" class="outline-3">
+<h3 id="org09d817a">Sending messages</h3>
+<div class="outline-text-3" id="text-org09d817a">
 <p>
 Gleam’s process requires type safety for both processes and messages.  When sending messages between
 processes, the first step is to have a 'subject' which references the spawned process.
@@ -380,7 +196,7 @@ starting processes.
 </p>
 
 
-<div id="org6de4dec" class="figure">
+<div id="org4ce231b" class="figure">
 <p><img src="hello-uml.png" alt="hello-uml.png" />
 </p>
 </div>
@@ -546,15 +362,15 @@ This creates output like: (It will be slightly different on your system)
 </p>
 
 
-<pre class="example" id="org4d3e3aa">
+<pre class="example" id="orga417bf4">
 TODO: generate example output code here.
 </pre>
 </div>
 </div>
 
-<div id="outline-container-orgfd91e5b" class="outline-3">
-<h3 id="orgfd91e5b">Gleam OTP</h3>
-<div class="outline-text-3" id="text-orgfd91e5b">
+<div id="outline-container-orga62c189" class="outline-3">
+<h3 id="orga62c189">Gleam OTP</h3>
+<div class="outline-text-3" id="text-orga62c189">
 <p>
 Gleam has its own library to simplify building programs using the actor model.  The current status of the gleam library
 "experimental" however its been usable for some time.
@@ -567,9 +383,9 @@ they become feasible or sane at a later date, this document could be updated.
 </div>
 </div>
 
-<div id="outline-container-org88c58dc" class="outline-3">
-<h3 id="org88c58dc">Simple process example as an 'actor'</h3>
-<div class="outline-text-3" id="text-org88c58dc">
+<div id="outline-container-org8987564" class="outline-3">
+<h3 id="org8987564">Simple process example as an 'actor'</h3>
+<div class="outline-text-3" id="text-org8987564">
 <p>
 Gleams actor implementation only runs on the erlang VM.  Actors take advantage of the underlying beam vm concurrency features
 which allows communication via message passing of typed messages.
@@ -677,7 +493,7 @@ Now for the meat.
 The output should be something like the following:
 </p>
 
-<pre class="example" id="org1f0523e">
+<pre class="example" id="org0388d32">
 "IN PARENT: message from init function"
 " IN CHILD: loop function triggered"
 " IN CHILD: Message from parent in loop: Hello from parent"
@@ -690,35 +506,19 @@ a
 </pre>
 
 <p>
-We can modify the example to use erlangs built in <a href="https://www.erlang.org/doc/apps/observer/observer_ug.html">observer</a> utility to observe the process
+We can modify the example above to use erlangs built in <a href="https://www.erlang.org/doc/apps/observer/observer_ug.html">observer</a> utility to observe the process
 being created and destroyed.
 </p>
 
 <p>
-The observer utility is erlang code and can be started from gleam using the foreign function interface
-and defining an external function.
-</p>
-
-<div class="org-src-container">
-<pre class="src src-gleam"><span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">external</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">observer_start</span><span style="color: #FF4F00; background-color: #190700;">()</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF7A00;">Nil</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
-  <span style="color: #FF6A00;">"observer"</span> <span style="color: #FF6A00;">"start"</span>
-</pre>
-</div>
-
-<p>
-This external 'observer:start()' can be started with observer_start() in gleam.  This should be early
-in the main() function.
-</p>
-
-<p>
-The process_id can be extracted from the subject, via the 'process.subject_owner' function.
+The erlang observer utility can be started as a foreign function and run in the gleam main thread
+while the program is running to inspect system state.
 </p>
 </div>
 
-
-<div id="outline-container-orga2754f6" class="outline-4">
-<h4 id="orga2754f6">Terminating the actor.</h4>
-<div class="outline-text-4" id="text-orga2754f6">
+<div id="outline-container-orgf96f6e7" class="outline-4">
+<h4 id="orgf96f6e7">Terminating the actor.</h4>
+<div class="outline-text-4" id="text-orgf96f6e7">
 <p>
 We can also explicitly terminate the actor, when we are done with it.  When an actor is unsupervised
 it is considered to be standalone and only 'kill' would work.
@@ -740,9 +540,9 @@ sent to the process, observer will show one less process in the list.
 </div>
 </div>
 
-<div id="outline-container-orgdc06bb1" class="outline-3">
-<h3 id="orgdc06bb1">The Worker</h3>
-<div class="outline-text-3" id="text-orgdc06bb1">
+<div id="outline-container-orga75fdfd" class="outline-3">
+<h3 id="orga75fdfd">The Worker</h3>
+<div class="outline-text-3" id="text-orga75fdfd">
 <p>
 Gleam OTP formalises the "worker and supervisor" pattern.  Workers should always be children of a supervisor,
 but supervisors can supervise other supervisors.
@@ -757,7 +557,7 @@ The worker function requirement takes a function which returns a result or an er
 </pre>
 </div>
 
-<pre class="example" id="orgbd3e1c3">
+<pre class="example" id="orgc90079b">
 let actor =
   actor.start_spec(actor.Spec(
     init: fn() {
@@ -797,9 +597,9 @@ This worker is not 'started' it merely exists as a specification to be used by a
 </div>
 </div>
 
-<div id="outline-container-org3084e31" class="outline-3">
-<h3 id="org3084e31">The supervisor</h3>
-<div class="outline-text-3" id="text-org3084e31">
+<div id="outline-container-org464d033" class="outline-3">
+<h3 id="org464d033">The supervisor</h3>
+<div class="outline-text-3" id="text-org464d033">
 <p>
 Looks almost exactly the same as the worker spec, wow.
 </p>
@@ -844,9 +644,9 @@ References: gleam otp source for <a href="https://github.com/gleam-lang/otp/blob
 </div>
 </div>
 
-<div id="outline-container-org292f6ef" class="outline-3">
-<h3 id="org292f6ef">Round the ring benchmark.</h3>
-<div class="outline-text-3" id="text-org292f6ef">
+<div id="outline-container-org3e0143c" class="outline-3">
+<h3 id="org3e0143c">Round the ring benchmark.</h3>
+<div class="outline-text-3" id="text-org3e0143c">
 <p>
 In his book Programming Erlang, Joe Armstrong asks:
 </p>
@@ -1050,12 +850,22 @@ We had to add an external function to terminate the runtime.
 </div>
 </div>
 
-<div id="outline-container-orgff99360" class="outline-2">
-<h2 id="orgff99360">Distribution</h2>
-<div class="outline-text-2" id="text-orgff99360">
+<div id="outline-container-orgddf7b5b" class="outline-2">
+<h2 id="orgddf7b5b">Distribution</h2>
+<div class="outline-text-2" id="text-orgddf7b5b">
 <p>
-Explain what distribution means in erlang, and what it means to gleam.
+A distributed Erlang system consists of a number of Erlang runtime systems communicating with each other.
+Each such runtime system is called a node. Message passing between processes at different nodes, as well as
+links and monitors are transparent when pids are used.
 </p>
+
+
+<p>
+When using un-secure distributed nodes, make sure that the network is configured to keep potential
+attackers out. See the Using SSL for Erlang Distribution User's Guide for details on how to setup
+a secure distributed node.
+</p>
+
 
 <p>
 Explain what it means to "start" the distribution.
@@ -1066,36 +876,36 @@ Explain cookies and using tls instead of plain
 </p>
 </div>
 
-<div id="outline-container-org9e13acf" class="outline-3">
-<h3 id="org9e13acf">Starting up nodes.</h3>
-<div class="outline-text-3" id="text-org9e13acf">
+<div id="outline-container-org23a61ca" class="outline-3">
+<h3 id="org23a61ca">Starting up nodes.</h3>
+<div class="outline-text-3" id="text-org23a61ca">
 <p>
 Starting up nodes, firewall rules, mention the ports.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org3aba43e" class="outline-3">
-<h3 id="org3aba43e">Spawning a process on another node.</h3>
-<div class="outline-text-3" id="text-org3aba43e">
+<div id="outline-container-org4ae6720" class="outline-3">
+<h3 id="org4ae6720">Spawning a process on another node.</h3>
+<div class="outline-text-3" id="text-org4ae6720">
 <p>
 Demonstrate starting a process on another node.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgd828d0d" class="outline-3">
-<h3 id="orgd828d0d">Finding processes on another node</h3>
-<div class="outline-text-3" id="text-orgd828d0d">
+<div id="outline-container-orgba17f06" class="outline-3">
+<h3 id="orgba17f06">Finding processes on another node</h3>
+<div class="outline-text-3" id="text-orgba17f06">
 <p>
 Demonstrate finding a process on another node.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgcd55e5b" class="outline-3">
-<h3 id="orgcd55e5b">Gleam process registry ?</h3>
-<div class="outline-text-3" id="text-orgcd55e5b">
+<div id="outline-container-org3292f89" class="outline-3">
+<h3 id="org3292f89">Gleam process registry ?</h3>
+<div class="outline-text-3" id="text-org3292f89">
 <p>
 This doesn't exist, should it? how do i find processes on another node.
 </p>
@@ -1103,9 +913,9 @@ This doesn't exist, should it? how do i find processes on another node.
 </div>
 </div>
 
-<div id="outline-container-org2d7de0d" class="outline-2">
-<h2 id="org2d7de0d">Resources:</h2>
-<div class="outline-text-2" id="text-org2d7de0d">
+<div id="outline-container-org6659937" class="outline-2">
+<h2 id="org6659937">Resources:</h2>
+<div class="outline-text-2" id="text-org6659937">
 <ul class="org-ul">
 <li>Erlang design principals: <a href="https://www.erlang.org/doc/design_principles/users_guide.html">https://www.erlang.org/doc/design_principles/users_guide.html</a></li>
 <li>McNimbles OTP demo: <a href="https://code-change.nl/gleam-blog/20230225-gleam-otp.html">https://code-change.nl/gleam-blog/20230225-gleam-otp.html</a></li>
@@ -1114,9 +924,9 @@ This doesn't exist, should it? how do i find processes on another node.
 </div>
 </div>
 
-<div id="outline-container-orge8041fa" class="outline-2">
-<h2 id="orge8041fa">Acknowledgements:</h2>
-<div class="outline-text-2" id="text-orge8041fa">
+<div id="outline-container-orgef01e75" class="outline-2">
+<h2 id="orgef01e75">Acknowledgements:</h2>
+<div class="outline-text-2" id="text-orgef01e75">
 <p>
 Thanks to :
 </p>

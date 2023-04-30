@@ -5,6 +5,7 @@
 #+OPTIONS: author:nil date:nil
 #+OPTIONS: html-postamble:nil
 #+STARTUP: inlineimages
+#+OPTIONS: html-style:nil
 #+HTML_HEAD: <link rel="stylesheet" href="tufte.css" type="text/css" />
 #+HTML_HEAD_EXTRA: <meta http-equiv="Content-Security-Policy"  content="default-src 'self'; img-src https://*; child-src 'none';">
 
@@ -705,7 +706,20 @@ $ gleam run -- --process-count=100 --loop=200000
 
 * Distribution
 
-Explain what distribution means in erlang, and what it means to gleam.
+A distributed Erlang system consists of a number of Erlang runtime systems communicating with each other.
+Each such runtime system is called a node. Message passing between processes at different nodes, as well as
+links and monitors are transparent when pids are used.
+
+#+begin_comment WARNING
+Starting a distributed node without also specifying -proto_dist inet_tls will expose the node
+to attacks that may give the attacker complete access to the node and in extension the cluster.
+#+end_comment
+
+
+When using un-secure distributed nodes, make sure that the network is configured to keep potential
+attackers out. See the Using SSL for Erlang Distribution User's Guide for details on how to setup
+a secure distributed node.
+
 
 Explain what it means to "start" the distribution.
 
