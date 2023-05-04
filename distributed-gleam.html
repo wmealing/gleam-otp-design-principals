@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-04-30 Sun 23:24 -->
+<!-- 2023-05-04 Thu 19:54 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Gleam OTP Design Principles User's Guide</title>
@@ -202,17 +202,17 @@
 This document is a work in progress and will be updated as time permits.
 </p>
 
-<div id="outline-container-org67ee3c9" class="outline-2">
-<h2 id="org67ee3c9">Overview</h2>
-<div class="outline-text-2" id="text-org67ee3c9">
+<div id="outline-container-orgba898f7" class="outline-2">
+<h2 id="orgba898f7">Overview</h2>
+<div class="outline-text-2" id="text-orgba898f7">
 <p>
 The OTP design principles define how to structure Gleam code in terms of processes and modules.
 </p>
 </div>
 
-<div id="outline-container-org3ca4ec3" class="outline-3">
-<h3 id="org3ca4ec3">Supervisor Tree</h3>
-<div class="outline-text-3" id="text-org3ca4ec3">
+<div id="outline-container-orga55beaa" class="outline-3">
+<h3 id="orga55beaa">Supervisor Tree</h3>
+<div class="outline-text-3" id="text-orga55beaa">
 <p>
 A fundamental idea of most BEAM based language is the ability to supervise a process, and be notified of its failure.
 This supervisory idea has roots in the erlang history and has become a well accepted method to deal with process failure.
@@ -242,7 +242,7 @@ In the following figure, square boxes represents supervisors and circles represe
 </p>
 
 
-<div id="org579bf37" class="figure">
+<div id="org8d58c2b" class="figure">
 <p><img src="supervisors_and_processes.png" alt="supervisors_and_processes.png" />
 </p>
 </div>
@@ -254,9 +254,9 @@ Supervisors can supervise workers, and supervisors can supervise supervisors.
 </div>
 </div>
 
-<div id="outline-container-orge93bbbd" class="outline-3">
-<h3 id="orge93bbbd">Simple Processes example.</h3>
-<div class="outline-text-3" id="text-orge93bbbd">
+<div id="outline-container-org3328b58" class="outline-3">
+<h3 id="org3328b58">Simple Processes example.</h3>
+<div class="outline-text-3" id="text-org3328b58">
 <p>
 Before understanding the worker/supervisor implementation,  We should create a basic example
 of starting a 'process' and sending messages to it.
@@ -270,9 +270,9 @@ traditional operating sytem thread or processes require.
 </div>
 </div>
 
-<div id="outline-container-org829162b" class="outline-3">
-<h3 id="org829162b">Starting a process.</h3>
-<div class="outline-text-3" id="text-org829162b">
+<div id="outline-container-org954c6f7" class="outline-3">
+<h3 id="org954c6f7">Starting a process.</h3>
+<div class="outline-text-3" id="text-org954c6f7">
 <p>
 A process can be started with "process.start", see the following:
 </p>
@@ -302,9 +302,47 @@ is not a supervisor.
 </div>
 </div>
 
-<div id="outline-container-orgfdd60f1" class="outline-3">
-<h3 id="orgfdd60f1">Sending messages</h3>
-<div class="outline-text-3" id="text-orgfdd60f1">
+<div id="outline-container-orgc45550a" class="outline-3">
+<h3 id="orgc45550a">Terminating a process</h3>
+<div class="outline-text-3" id="text-orgc45550a">
+<p>
+The default behavior of the gleam runtime is to terminate when the execution has reached the end
+of the main function.  Other processes running on the BEAM virtual machine will be terminated
+immediately.
+</p>
+
+<p>
+The OTP-like functionality in gleam needs multiple processes to be running at once.  If the BEAM
+vm is terminated, any work or function that other processes in the BEAM vm will terminate before they
+they have finished their work.  The main 'thread' can be prevented from ending with the following call.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-gleam"><span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">sleep_forever</span><span style="color: #FF4F00; background-color: #190700;">()</span>
+</pre>
+</div>
+
+<p>
+For a program to terminate without user interaction the BEAM vm must be terminated.  At this point
+in time there are no gleam functions to terminate the VM, so a FFI wrapper must be used.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-gleam"><span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">external</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">terminate</span><span style="color: #FF4F00; background-color: #190700;">()</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF7A00;">Nil</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
+    <span style="color: #FF6A00;">"erlang"</span> <span style="color: #FF6A00;">"halt"</span>
+</pre>
+</div>
+
+<p>
+This creates a module function called terminate, which calls the erlang:halt() function on the VM effectively
+terminating the vm.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4a6b830" class="outline-3">
+<h3 id="org4a6b830">Sending messages</h3>
+<div class="outline-text-3" id="text-org4a6b830">
 <p>
 Gleam’s process requires type safety for both processes and messages.  When sending messages between
 processes, the first step is to have a 'subject' which references the spawned process.
@@ -380,7 +418,7 @@ starting processes.
 </p>
 
 
-<div id="orgca1b400" class="figure">
+<div id="orgec8405a" class="figure">
 <p><img src="hello-uml.png" alt="hello-uml.png" />
 </p>
 </div>
@@ -545,15 +583,15 @@ It contains some more advanced functionality that we will touch on later.
 This creates output like: (It will be slightly different on your system)
 </p>
 
-<pre class="example" id="org713d6d9">
+<pre class="example" id="org99a7a09">
 TODO: generate example output code here.
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org372a210" class="outline-3">
-<h3 id="org372a210">Gleam OTP</h3>
-<div class="outline-text-3" id="text-org372a210">
+<div id="outline-container-org18cfd7f" class="outline-3">
+<h3 id="org18cfd7f">Gleam OTP</h3>
+<div class="outline-text-3" id="text-org18cfd7f">
 <p>
 Gleam has its own library to simplify building programs using the actor model.  The current status of the gleam library
 "experimental" however its been usable for some time.
@@ -566,9 +604,9 @@ they become feasible or sane at a later date, this document could be updated.
 </div>
 </div>
 
-<div id="outline-container-orgafa1a8a" class="outline-3">
-<h3 id="orgafa1a8a">Simple process example as an 'actor'</h3>
-<div class="outline-text-3" id="text-orgafa1a8a">
+<div id="outline-container-orga74b12a" class="outline-3">
+<h3 id="orga74b12a">Simple process example as an 'actor'</h3>
+<div class="outline-text-3" id="text-orga74b12a">
 <p>
 Gleams actor implementation only runs on the erlang VM.  Actors take advantage of the underlying beam vm concurrency features
 which allows communication via message passing of typed messages.
@@ -609,18 +647,6 @@ The main process needs to 'sleep' while while waiting for the other processes to
 process will be terminated early.
 </p>
 
-<p>
-Use the following function, to sleep until the erlang vm is explicitly halted.
-</p>
-
-<div class="org-src-container">
-<pre class="src src-gleam"><span style="color: #FF7A00;">Ok</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">process</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">sleep_forever</span><span style="color: #E14400; background-color: #190700;">()</span><span style="color: #FF4F00; background-color: #190700;">)</span>
-</pre>
-</div>
-
-<p>
-Now for the meat.
-</p>
 
 <div class="org-src-container">
 <pre class="src src-gleam"><span style="color: #FF5A00;">import</span> gleam/io
@@ -676,7 +702,7 @@ Now for the meat.
 The output should be something like the following:
 </p>
 
-<pre class="example" id="org5e30f69">
+<pre class="example" id="org0099aab">
 "IN PARENT: message from init function"
 " IN CHILD: loop function triggered"
 " IN CHILD: Message from parent in loop: Hello from parent"
@@ -699,9 +725,9 @@ while the program is running to inspect system state.
 </p>
 </div>
 
-<div id="outline-container-org2df6c36" class="outline-4">
-<h4 id="org2df6c36">Terminating the actor.</h4>
-<div class="outline-text-4" id="text-org2df6c36">
+<div id="outline-container-orgd1bbd42" class="outline-4">
+<h4 id="orgd1bbd42">Terminating the actor.</h4>
+<div class="outline-text-4" id="text-orgd1bbd42">
 <p>
 We can also explicitly terminate the actor, when we are done with it.  When an actor is unsupervised
 it is considered to be standalone and 'kill' would be the only call that would terminate the process.
@@ -723,9 +749,9 @@ sent to the process, observer will show one less process in the list.
 </div>
 </div>
 
-<div id="outline-container-org5d40fa8" class="outline-3">
-<h3 id="org5d40fa8">The Worker</h3>
-<div class="outline-text-3" id="text-org5d40fa8">
+<div id="outline-container-orgcb43173" class="outline-3">
+<h3 id="orgcb43173">The Worker</h3>
+<div class="outline-text-3" id="text-orgcb43173">
 <p>
 Gleam OTP formalises the "worker and supervisor" pattern.  Workers should always be children of a supervisor,
 but supervisors can supervise other supervisors.
@@ -740,7 +766,7 @@ The worker function requirement takes a function which returns a result or an er
 </pre>
 </div>
 
-<pre class="example" id="org2c49c8c">
+<pre class="example" id="org3672482">
 let actor =
   actor.start_spec(actor.Spec(
     init: fn() {
@@ -784,9 +810,9 @@ TODO: Integrate McNimbles suggestion about 'returning and the 3rd arg of ChildSp
 </div>
 </div>
 
-<div id="outline-container-org3e670d2" class="outline-3">
-<h3 id="org3e670d2">The supervisor</h3>
-<div class="outline-text-3" id="text-org3e670d2">
+<div id="outline-container-org5c64dbd" class="outline-3">
+<h3 id="org5c64dbd">The supervisor</h3>
+<div class="outline-text-3" id="text-org5c64dbd">
 <p>
 The supervisor is responsible for starting, stopping, and monitoring its child processes.
 The basic idea of a supervisor is that it must keep its child processes alive by restarting them when necessary.
@@ -854,9 +880,9 @@ References: gleam otp source for <a href="https://github.com/gleam-lang/otp/blob
 </div>
 </div>
 
-<div id="outline-container-org4dba262" class="outline-3">
-<h3 id="org4dba262">Round the ring benchmark.</h3>
-<div class="outline-text-3" id="text-org4dba262">
+<div id="outline-container-org07d87b4" class="outline-3">
+<h3 id="org07d87b4">Round the ring benchmark.</h3>
+<div class="outline-text-3" id="text-org07d87b4">
 <p>
 In his book Programming Erlang, Joe Armstrong asks:
 </p>
@@ -878,16 +904,6 @@ Below is an example of this ring benchmark, using the glint library 0.12-rc3 lib
 <p>
 Much like the previous example, when the main thread terminates, all the children processes will be terminated.
 </p>
-
-<p>
-We had to add an external function to terminate the runtime.
-</p>
-
-<div class="org-src-container">
-<pre class="src src-gleam"><span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">external</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">terminate</span><span style="color: #FF4F00; background-color: #190700;">()</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF7A00;">Nil</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
-    <span style="color: #FF6A00;">"erlang"</span> <span style="color: #FF6A00;">"halt"</span>
-</pre>
-</div>
 
 <p>
 Without explicit termination, we can't tell how long a runs as the user would need to interact with the process.
@@ -922,7 +938,7 @@ We run the benchmark with the process count of 100, with 200,000 iterations of t
 <span style="color: #D05010; font-style: italic;">// the key for the process-count flag </span><span style="color: #FF4F00; font-style: italic;">(</span><span style="color: #D05010; font-style: italic;">N</span><span style="color: #FF4F00; font-style: italic;">)</span>
 <span style="color: #FF5A00;">const</span> <span style="color: #FF3A00;">process_count</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF6A00;">"process-count"</span>
 
-<span style="color: #D05010; font-style: italic;">// terminate the vm,  i can't find a better way.</span>
+<span style="color: #D05010; font-style: italic;">// terminate the vm.</span>
 <span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">external</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">terminate</span><span style="color: #FF4F00; background-color: #190700;">()</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF7A00;">Nil</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
   <span style="color: #FF6A00;">"erlang"</span> <span style="color: #FF6A00;">"halt"</span>
 
@@ -984,47 +1000,8 @@ We run the benchmark with the process count of 100, with 200,000 iterations of t
 <span style="color: #FF4F00; background-color: #190700;">}</span>
 
 <span style="color: #FF5A00;">pub</span> <span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">main</span><span style="color: #FF4F00; background-color: #190700;">()</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
-  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">loop_flag</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
-    <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF7A00;">I</span>
-    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">default</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00;">10</span><span style="color: #E14400; background-color: #190700;">)</span>
-    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">new</span>
-    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">description</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF6A00;">"Loop the ring n times."</span><span style="color: #E14400; background-color: #190700;">)</span>
-
-  <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">process_count_flag</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
-    <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #FF7A00;">I</span>
-    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">default</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00;">1000</span><span style="color: #E14400; background-color: #190700;">)</span>
-    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">new</span>
-    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">description</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF6A00;">"Create N processes in a ring"</span><span style="color: #E14400; background-color: #190700;">)</span>
-
-  <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">new</span><span style="color: #E14400; background-color: #190700;">()</span>
-  <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">add</span><span style="color: #E14400; background-color: #190700;">(</span>
-    <span style="color: #FF3A00; font-style: italic;">at</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #D04000; background-color: #190700;">[]</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
-    <span style="color: #FF3A00; font-style: italic;">do</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">command</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">build_args</span><span style="color: #D04000; background-color: #190700;">)</span>
-    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">flag</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">loop</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">loop_flag</span><span style="color: #D04000; background-color: #190700;">)</span>
-    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">flag</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">process_count</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF4A00;">process_count_flag</span><span style="color: #D04000; background-color: #190700;">)</span>
-    <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">description</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF6A00;">"Runs Joe Armstrongs ring benchmark"</span><span style="color: #D04000; background-color: #190700;">)</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
-  <span style="color: #E14400; background-color: #190700;">)</span>
-  <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">glint</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">run_and_handle</span><span style="color: #E14400; background-color: #190700;">(</span>
-    <span style="color: #F07010;">start_arguments</span><span style="color: #D04000; background-color: #190700;">()</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
-    <span style="color: #FF5A00;">fn</span><span style="color: #D04000; background-color: #190700;">(</span><span style="color: #FF4A00;">res</span><span style="color: #D04000; background-color: #190700;">)</span> <span style="color: #D04000; background-color: #190700;">{</span>
-      <span style="color: #FF5A00;">case</span> <span style="color: #FF4A00;">res</span> <span style="color: #AA3A00; background-color: #190700;">{</span>
-        <span style="color: #FF7A00;">Ok</span><span style="color: #FF4F00; background-color: #190700;">(</span>_out<span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
-          <span style="color: #D05010; font-style: italic;">// probably should have better error handling here.</span>
-          <span style="color: #FF4A00;">io</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">debug</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF6A00;">"looks good - OKAY"</span><span style="color: #E14400; background-color: #190700;">)</span>
-        <span style="color: #FF4F00; background-color: #190700;">}</span>
-        <span style="color: #FF7A00;">Error</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">err</span><span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">-&gt;</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
-          <span style="color: #FF4A00;">err</span>
-        <span style="color: #FF4F00; background-color: #190700;">}</span>
-      <span style="color: #AA3A00; background-color: #190700;">}</span>
-      <span style="color: #FF5A00;">|&gt;</span> <span style="color: #FF4A00;">io</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">println</span>
-    <span style="color: #D04000; background-color: #190700;">}</span><span style="color: #FFE0C0; background-color: #190700;">,</span>
-  <span style="color: #E14400; background-color: #190700;">)</span>
-<span style="color: #FF4F00; background-color: #190700;">}</span>
-
-<span style="color: #FF5A00;">fn</span> <span style="color: #F07010;">build_args</span><span style="color: #FF4F00; background-color: #190700;">(</span><span style="color: #FF4A00;">input</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF7A00;">CommandInput</span><span style="color: #FF4F00; background-color: #190700;">)</span> <span style="color: #FF4F00; background-color: #190700;">{</span>
-  <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF7A00;">Ok</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">loop</span><span style="color: #E14400; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">get_int</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00; font-style: italic;">from</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">input</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">flags</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF3A00; font-style: italic;">for</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">loop</span><span style="color: #E14400; background-color: #190700;">)</span>
-  <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF7A00;">Ok</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF4A00;">process_count</span><span style="color: #E14400; background-color: #190700;">)</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
-    <span style="color: #FF4A00;">flag</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">get_int</span><span style="color: #E14400; background-color: #190700;">(</span><span style="color: #FF3A00; font-style: italic;">from</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">input</span><span style="color: #FFE0C0; background-color: #190700;">.</span><span style="color: #F07010; font-style: italic;">flags</span><span style="color: #FFE0C0; background-color: #190700;">,</span> <span style="color: #FF3A00; font-style: italic;">for</span><span style="color: #FFE0C0; background-color: #190700;">:</span> <span style="color: #FF4A00;">process_count</span><span style="color: #E14400; background-color: #190700;">)</span>
+    <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF4A00;">loop</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF3A00;">200</span>
+    <span style="color: #FF5A00;">let</span> <span style="color: #FF5A00;">assert</span> <span style="color: #FF4A00;">process_count</span> <span style="color: #FFE0C0; background-color: #190700;">=</span> <span style="color: #FF3A00;">1000</span>
 
   <span style="color: #D05010; font-style: italic;">// make 10 actors</span>
   <span style="color: #FF5A00;">let</span> <span style="color: #FF4A00;">actor_list</span> <span style="color: #FFE0C0; background-color: #190700;">=</span>
@@ -1068,77 +1045,10 @@ We run the benchmark with the process count of 100, with 200,000 iterations of t
 </div>
 </div>
 
-<div id="outline-container-orgea2d460" class="outline-2">
-<h2 id="orgea2d460">Distribution</h2>
-<div class="outline-text-2" id="text-orgea2d460">
-<p>
-A distributed Erlang system consists of a number of Erlang runtime systems communicating with each other.
-Each such runtime system is called a node. Message passing between processes at different nodes, as well as
-links and monitors are transparent when pids are used.
-</p>
 
-<p>
-By default gleam is NOT started in a distributed node and is configured not to be able to interact with other
-BEAM nodes.
-</p>
-
-<p>
-When using un-secure distributed nodes, make sure that the network is configured to keep potential
-attackers out. See the Using SSL for Erlang Distribution User's Guide for details on how to setup
-a secure distributed node.
-</p>
-</div>
-
-
-<div id="outline-container-org5505717" class="outline-3">
-<h3 id="org5505717">Starting up nodes.</h3>
-<div class="outline-text-3" id="text-org5505717">
-<ul class="org-ul">
-<li>mention that shortname or longname, not both.</li>
-
-<li>epmd should be started.</li>
-
-<li>panging a node.</li>
-</ul>
-
-
-<p>
-Starting up nodes, firewall rules, mention the ports.
-</p>
-</div>
-</div>
-
-<div id="outline-container-orgd8e976e" class="outline-3">
-<h3 id="orgd8e976e">Spawning a process on another node.</h3>
-<div class="outline-text-3" id="text-orgd8e976e">
-<p>
-Demonstrate starting a process on another node.
-</p>
-</div>
-</div>
-
-<div id="outline-container-org8a9a0aa" class="outline-3">
-<h3 id="org8a9a0aa">Finding processes on another node</h3>
-<div class="outline-text-3" id="text-org8a9a0aa">
-<p>
-Demonstrate finding a process on another node.
-</p>
-</div>
-</div>
-
-<div id="outline-container-orgada14d2" class="outline-3">
-<h3 id="orgada14d2">Gleam process registry ?</h3>
-<div class="outline-text-3" id="text-orgada14d2">
-<p>
-This doesn't exist, should it? how do i find processes on another node.
-</p>
-</div>
-</div>
-</div>
-
-<div id="outline-container-orgb043477" class="outline-2">
-<h2 id="orgb043477">Resources:</h2>
-<div class="outline-text-2" id="text-orgb043477">
+<div id="outline-container-orgc650b5f" class="outline-2">
+<h2 id="orgc650b5f">Resources:</h2>
+<div class="outline-text-2" id="text-orgc650b5f">
 <ul class="org-ul">
 <li>Erlang design principals: <a href="https://www.erlang.org/doc/design_principles/users_guide.html">https://www.erlang.org/doc/design_principles/users_guide.html</a></li>
 <li>McNimbles OTP demo: <a href="https://code-change.nl/gleam-blog/20230225-gleam-otp.html">https://code-change.nl/gleam-blog/20230225-gleam-otp.html</a></li>
@@ -1147,9 +1057,9 @@ This doesn't exist, should it? how do i find processes on another node.
 </div>
 </div>
 
-<div id="outline-container-orgff5f6e0" class="outline-2">
-<h2 id="orgff5f6e0">Acknowledgements:</h2>
-<div class="outline-text-2" id="text-orgff5f6e0">
+<div id="outline-container-org2c130bb" class="outline-2">
+<h2 id="org2c130bb">Acknowledgements:</h2>
+<div class="outline-text-2" id="text-org2c130bb">
 <p>
 Thanks to :
 </p>

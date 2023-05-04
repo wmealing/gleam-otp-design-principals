@@ -97,6 +97,31 @@ the other participant.  The exit message will contain the reason of the terminat
 In this simple example, there is no need to know if a process has terminated as no action will be taken.  This
 is not a supervisor.
 
+** Terminating a process
+
+The default behavior of the gleam runtime is to terminate when the execution has reached the end
+of the main function.  Other processes running on the BEAM virtual machine will be terminated
+immediately.
+
+The OTP-like functionality in gleam needs multiple processes to be running at once.  If the BEAM
+vm is terminated, any work or function that other processes in the BEAM vm will terminate before they
+they have finished their work.  The main 'thread' can be prevented from ending with the following call.
+
+#+begin_src gleam
+    process.sleep_forever()
+#+end_src
+
+For a program to terminate without user interaction the BEAM vm must be terminated.  At this point
+in time there are no gleam functions to terminate the VM, so a FFI wrapper must be used.
+
+#+begin_src gleam
+pub external fn terminate() -> Nil =
+    "erlang" "halt"
+#+end_src
+
+This creates a module function called terminate, which calls the erlang:halt() function on the VM effectively
+terminating the vm.
+
 ** Sending messages
 
 Gleam’s process requires type safety for both processes and messages.  When sending messages between
@@ -350,13 +375,6 @@ function, however this could be added as 'state' during the init function.
 The main process needs to 'sleep' while while waiting for the other processes to run.  Or the entire
 process will be terminated early.
 
-Use the following function, to sleep until the erlang vm is explicitly halted.
-
-#+begin_src gleam
-    Ok(process.sleep_forever())
-#+end_src
-
-Now for the meat.
 
 #+begin_src gleam
   import gleam/io
@@ -544,13 +562,6 @@ Below is an example of this ring benchmark, using the glint library 0.12-rc3 lib
 
 Much like the previous example, when the main thread terminates, all the children processes will be terminated.
 
-We had to add an external function to terminate the runtime.
-
-#+begin_src gleam
-pub external fn terminate() -> Nil =
-    "erlang" "halt"
-#+end_src
-
 Without explicit termination, we can't tell how long a runs as the user would need to interact with the process.
 
 We run the benchmark with the process count of 100, with 200,000 iterations of the loop at the shell with the command:
@@ -579,7 +590,7 @@ $ gleam run -- --process-count=100 --loop=200000
   // the key for the process-count flag (N)
   const process_count = "process-count"
 
-  // terminate the vm,  i can't find a better way.
+  // terminate the vm.
   pub external fn terminate() -> Nil =
     "erlang" "halt"
 
@@ -641,47 +652,8 @@ $ gleam run -- --process-count=100 --loop=200000
   }
 
   pub fn main() {
-    let loop_flag =
-      flag.I
-      |> flag.default(10)
-      |> flag.new
-      |> flag.description("Loop the ring n times.")
-
-    let process_count_flag =
-      flag.I
-      |> flag.default(1000)
-      |> flag.new
-      |> flag.description("Create N processes in a ring")
-
-    glint.new()
-    |> glint.add(
-      at: [],
-      do: glint.command(build_args)
-      |> glint.flag(loop, loop_flag)
-      |> glint.flag(process_count, process_count_flag)
-      |> glint.description("Runs Joe Armstrongs ring benchmark"),
-    )
-    |> glint.run_and_handle(
-      start_arguments(),
-      fn(res) {
-        case res {
-          Ok(_out) -> {
-            // probably should have better error handling here.
-            io.debug("looks good - OKAY")
-          }
-          Error(err) -> {
-            err
-          }
-        }
-        |> io.println
-      },
-    )
-  }
-
-  fn build_args(input: CommandInput) {
-    let assert Ok(loop) = flag.get_int(from: input.flags, for: loop)
-    let assert Ok(process_count) =
-      flag.get_int(from: input.flags, for: process_count)
+      let assert loop = 200
+      let assert process_count = 1000
 
     // make 10 actors
     let actor_list =
@@ -742,7 +714,36 @@ a secure distributed node.
 
 ** Starting up nodes.
 
+fn main() {
+  ... some stuff ...
+        net_kernel_start([
+          atom.create_from_string("dilbert@localhost"),
+          atom.create_from_string("shortnames"),
+        ])
+      process.start(ping_all, True)
+  ... more stuff ...
+}
+
+fn ping_all() {
+  assert Ok(names) = net_adm_names()
+  assert nodename = net_kernel_nodename()
+
+  names
+  |> list.each(fn(entry) {
+    assert #(name, _port) = entry
+    assert ping_addr =
+      string.join([name, "@", "localhost"], "")
+      |> atom.create_from_string
+      |> io.debug
+    net_adm_ping(ping_addr)
+    |> io.debug()
+  })
+  process.sleep(10000)
+  ping_all()
+}
 - mention that shortname or longname, not both.
+
+
   
 - epmd should be started.
 
