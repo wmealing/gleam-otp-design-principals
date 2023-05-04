@@ -1,0 +1,70 @@
+* Distribution
+
+A distributed Erlang system consists of a number of Erlang runtime systems communicating with each other.
+Each such runtime system is called a node. Message passing between processes at different nodes, as well as
+links and monitors are transparent when pids are used.
+
+By default gleam is NOT started in a distributed node and is configured not to be able to interact with other
+BEAM nodes.
+
+#+begin_comment WARNING
+Starting a distributed node without also specifying -proto_dist inet_tls will expose the node
+to attacks that may give the attacker complete access to the node and in extension the cluster.
+#+end_comment
+
+When using un-secure distributed nodes, make sure that the network is configured to keep potential
+attackers out. See the Using SSL for Erlang Distribution User's Guide for details on how to setup
+a secure distributed node.
+
+
+** Starting up nodes.
+
+fn main() {
+  ... some stuff ...
+        net_kernel_start([
+          atom.create_from_string("dilbert@localhost"),
+          atom.create_from_string("shortnames"),
+        ])
+      process.start(ping_all, True)
+  ... more stuff ...
+}
+
+fn ping_all() {
+  assert Ok(names) = net_adm_names()
+  assert nodename = net_kernel_nodename()
+
+  names
+  |> list.each(fn(entry) {
+    assert #(name, _port) = entry
+    assert ping_addr =
+      string.join([name, "@", "localhost"], "")
+      |> atom.create_from_string
+      |> io.debug
+    net_adm_ping(ping_addr)
+    |> io.debug()
+  })
+  process.sleep(10000)
+  ping_all()
+}
+- mention that shortname or longname, not both.
+
+
+
+- epmd should be started.
+
+- panging a node.
+
+
+Starting up nodes, firewall rules, mention the ports.
+
+** Spawning a process on another node.
+
+Demonstrate starting a process on another node.
+
+** Finding processes on another node
+
+Demonstrate finding a process on another node.
+
+** Gleam process registry ?
+
+This doesn't exist, should it? how do i find processes on another node.
